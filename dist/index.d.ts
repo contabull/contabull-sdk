@@ -49,6 +49,7 @@ interface ContabullOptions {
     apiKey: string;
     privateKey: string;
     timeout?: number;
+    debugMode?: boolean;
 }
 declare class Contabull {
     private client;

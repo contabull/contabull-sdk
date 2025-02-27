@@ -55,6 +55,9 @@ var Contabull = class {
       baseURL: this.options.baseUrl,
       timeout: this.options.timeout
     });
+    if (this.options.debugMode) {
+      console.log(options);
+    }
     this.authorization = new AuthorizationResource(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
