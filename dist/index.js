@@ -81,6 +81,19 @@ var Authorization = class extends BaseResource {
   }
 };
 
+// src/resources/charges.ts
+var Charges = class extends BaseResource {
+  constructor(client) {
+    super(client, "/charges");
+  }
+  /**
+   * Create a new charge
+   */
+  async create(data) {
+    return this.post("/create", data);
+  }
+};
+
 // src/sdk.ts
 var Contabull = class {
   constructor(options) {
@@ -93,6 +106,7 @@ var Contabull = class {
       timeout: this.options.timeout
     });
     this.authorization = new Authorization(this.client);
+    this.charges = new Charges(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
       (error) => Promise.reject(error)

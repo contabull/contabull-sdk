@@ -22,6 +22,17 @@ declare class Authorization extends BaseResource {
     try(): Promise<AuthorizationTrialReturn>;
 }
 
+interface CreateChargeReturn {
+    message: string;
+}
+declare class Charges extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Create a new charge
+     */
+    create(data: any): Promise<CreateChargeReturn>;
+}
+
 interface ContabullOptions {
     baseUrl: string;
     apiKey: string;
@@ -32,6 +43,7 @@ declare class Contabull {
     private client;
     private options;
     authorization: Authorization;
+    charges: Charges;
     constructor(options: ContabullOptions);
     request<T>(config: AxiosRequestConfig): Promise<T>;
     private signRequest;
