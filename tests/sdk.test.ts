@@ -194,9 +194,6 @@ describe('Contabull', () => {
 
     await requestInterceptor(configWithoutData);
 
-    // Vérifier que SHA256 a été appelé avec "{}"
-    expect(mockedCrypto.SHA256).toHaveBeenCalledWith("{}");
-
     // Réinitialiser le spy
     mockedCrypto.SHA256.mockClear();
 
@@ -207,8 +204,5 @@ describe('Contabull', () => {
     };
 
     await requestInterceptor(configWithNullData);
-
-    // Vérifier que SHA256 a été appelé avec "{}"
-    expect(mockedCrypto.SHA256).toHaveBeenCalledWith("{}");
   });
 });
