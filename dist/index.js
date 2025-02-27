@@ -31,7 +31,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var src_exports = {};
 __export(src_exports, {
   Authorization: () => Authorization,
-  Contabull: () => Contabull
+  Contabull: () => Contabull,
+  Currency: () => Currency
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -82,6 +83,42 @@ var Authorization = class extends BaseResource {
 };
 
 // src/resources/charges.ts
+var import_zod = require("zod");
+
+// src/types.ts
+var Currency = /* @__PURE__ */ ((Currency2) => {
+  Currency2["BRL"] = "BRL";
+  Currency2["USD"] = "USD";
+  Currency2["EUR"] = "EUR";
+  return Currency2;
+})(Currency || {});
+
+// src/utils/safe-await.ts
+var safeAwait = async (promise) => {
+  try {
+    const result = await promise;
+    return { result, error: null };
+  } catch (error) {
+    return { result: null, error };
+  }
+};
+
+// src/utils/validate-or-throw.ts
+var validateOrThrow = async (schema, data) => {
+  const validation = await safeAwait(schema.parseAsync(data));
+  if (validation.error) {
+    throw new Error(validation.error.issues);
+  }
+  return validation.result;
+};
+
+// src/resources/charges.ts
+var ChargeCreateSchemaDto = import_zod.z.object({
+  accountId: import_zod.z.string(),
+  amount: import_zod.z.number().positive(),
+  currency: import_zod.z.nativeEnum(Currency),
+  externalId: import_zod.z.string().optional()
+});
 var Charges = class extends BaseResource {
   constructor(client) {
     super(client, "/charges");
@@ -90,6 +127,7 @@ var Charges = class extends BaseResource {
    * Create a new charge
    */
   async create(data) {
+    await validateOrThrow(ChargeCreateSchemaDto, data);
     return this.post("/create", data);
   }
 };
@@ -151,5 +189,6 @@ var Contabull = class {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Authorization,
-  Contabull
+  Contabull,
+  Currency
 });

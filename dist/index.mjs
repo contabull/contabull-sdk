@@ -45,6 +45,42 @@ var Authorization = class extends BaseResource {
 };
 
 // src/resources/charges.ts
+import { z } from "zod";
+
+// src/types.ts
+var Currency = /* @__PURE__ */ ((Currency2) => {
+  Currency2["BRL"] = "BRL";
+  Currency2["USD"] = "USD";
+  Currency2["EUR"] = "EUR";
+  return Currency2;
+})(Currency || {});
+
+// src/utils/safe-await.ts
+var safeAwait = async (promise) => {
+  try {
+    const result = await promise;
+    return { result, error: null };
+  } catch (error) {
+    return { result: null, error };
+  }
+};
+
+// src/utils/validate-or-throw.ts
+var validateOrThrow = async (schema, data) => {
+  const validation = await safeAwait(schema.parseAsync(data));
+  if (validation.error) {
+    throw new Error(validation.error.issues);
+  }
+  return validation.result;
+};
+
+// src/resources/charges.ts
+var ChargeCreateSchemaDto = z.object({
+  accountId: z.string(),
+  amount: z.number().positive(),
+  currency: z.nativeEnum(Currency),
+  externalId: z.string().optional()
+});
 var Charges = class extends BaseResource {
   constructor(client) {
     super(client, "/charges");
@@ -53,6 +89,7 @@ var Charges = class extends BaseResource {
    * Create a new charge
    */
   async create(data) {
+    await validateOrThrow(ChargeCreateSchemaDto, data);
     return this.post("/create", data);
   }
 };
@@ -113,5 +150,6 @@ var Contabull = class {
 };
 export {
   Authorization,
-  Contabull
+  Contabull,
+  Currency
 };

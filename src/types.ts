@@ -24,5 +24,6 @@ export interface PaginatedResponse<T> {
   }
 }
 
-// Add more common types as needed
+export enum Currency { BRL = 'BRL', USD = 'USD', EUR = 'EUR' }
 
+// Add more common types as needed

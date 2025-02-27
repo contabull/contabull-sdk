@@ -1,4 +1,5 @@
 import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { z } from 'zod';
 
 declare abstract class BaseResource {
     protected client: AxiosInstance;
@@ -22,33 +23,6 @@ declare class Authorization extends BaseResource {
     try(): Promise<AuthorizationTrialReturn>;
 }
 
-interface CreateChargeReturn {
-    message: string;
-}
-declare class Charges extends BaseResource {
-    constructor(client: AxiosInstance);
-    /**
-     * Create a new charge
-     */
-    create(data: any): Promise<CreateChargeReturn>;
-}
-
-interface ContabullOptions {
-    baseUrl: string;
-    apiKey: string;
-    privateKey: string;
-    timeout?: number;
-}
-declare class Contabull {
-    private client;
-    private options;
-    authorization: Authorization;
-    charges: Charges;
-    constructor(options: ContabullOptions);
-    request<T>(config: AxiosRequestConfig): Promise<T>;
-    private signRequest;
-}
-
 interface ApiError {
     status: number;
     message: string;
@@ -70,5 +44,54 @@ interface PaginatedResponse<T> {
         totalPages: number;
     };
 }
+declare enum Currency {
+    BRL = "BRL",
+    USD = "USD",
+    EUR = "EUR"
+}
 
-export { ApiError, Authorization, Contabull, ContabullOptions, PaginatedResponse, PaginationParams };
+declare const ChargeCreateSchemaDto: z.ZodObject<{
+    accountId: z.ZodString;
+    amount: z.ZodNumber;
+    currency: z.ZodNativeEnum<typeof Currency>;
+    externalId: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    accountId: string;
+    amount: number;
+    currency: Currency;
+    externalId?: string | undefined;
+}, {
+    accountId: string;
+    amount: number;
+    currency: Currency;
+    externalId?: string | undefined;
+}>;
+type ChargeCreateDto = z.infer<typeof ChargeCreateSchemaDto>;
+interface CreateChargeReturn {
+    message: string;
+}
+declare class Charges extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Create a new charge
+     */
+    create(data: ChargeCreateDto): Promise<CreateChargeReturn>;
+}
+
+interface ContabullOptions {
+    baseUrl: string;
+    apiKey: string;
+    privateKey: string;
+    timeout?: number;
+}
+declare class Contabull {
+    private client;
+    private options;
+    authorization: Authorization;
+    charges: Charges;
+    constructor(options: ContabullOptions);
+    request<T>(config: AxiosRequestConfig): Promise<T>;
+    private signRequest;
+}
+
+export { ApiError, Authorization, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams };
