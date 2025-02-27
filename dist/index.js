@@ -30,9 +30,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  Contabull: () => Contabull,
-  ProductsResource: () => ProductsResource,
-  UsersResource: () => UsersResource
+  AuthorizationResource: () => AuthorizationResource,
+  Contabull: () => Contabull
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -69,65 +68,16 @@ var BaseResource = class {
   }
 };
 
-// src/resources/users.ts
-var UsersResource = class extends BaseResource {
+// src/resources/authorization.ts
+var AuthorizationResource = class extends BaseResource {
   constructor(client) {
-    super(client, "/users");
+    super(client, "/try");
   }
   /**
-   * Get a list of users
+   * Try API Authorization
    */
-  async getAll(params) {
-    return this.get("", params);
-  }
-  /**
-   * Get a user by ID
-   */
-  async getById(id) {
-    return this.get(`/${id}`);
-  }
-  /**
-   * Create a new user
-   */
-  async create(data) {
-    return this.post("", data);
-  }
-  /**
-   * Update a user
-   */
-  async update(id, data) {
-    return this.patch(`/${id}`, data);
-  }
-};
-
-// src/resources/products.ts
-var ProductsResource = class extends BaseResource {
-  constructor(client) {
-    super(client, "/products");
-  }
-  /**
-   * Get a list of products
-   */
-  async getAll(params) {
-    return this.get("", params);
-  }
-  /**
-   * Get a product by ID
-   */
-  async getById(id) {
-    return this.get(`/${id}`);
-  }
-  /**
-   * Create a new product
-   */
-  async create(data) {
-    return this.post("", data);
-  }
-  /**
-   * Update a product
-   */
-  async update(id, data) {
-    return this.patch(`/${id}`, data);
+  async try() {
+    return this.get("");
   }
 };
 
@@ -142,8 +92,7 @@ var Contabull = class {
       baseURL: this.options.baseUrl,
       timeout: this.options.timeout
     });
-    this.users = new UsersResource(this.client);
-    this.products = new ProductsResource(this.client);
+    this.authorization = new AuthorizationResource(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
       (error) => {
@@ -189,7 +138,6 @@ var Contabull = class {
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  Contabull,
-  ProductsResource,
-  UsersResource
+  AuthorizationResource,
+  Contabull
 });

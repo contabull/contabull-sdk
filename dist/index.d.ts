@@ -33,78 +33,15 @@ interface PaginatedResponse<T> {
     };
 }
 
-interface User {
-    id: string;
-    email: string;
-    name: string;
-    createdAt: string;
-    updatedAt: string;
+interface AuthorizationTrialReturn {
+    message: string;
 }
-interface CreateUserDto {
-    email: string;
-    name: string;
-    password: string;
-}
-interface UpdateUserDto {
-    name?: string;
-    email?: string;
-}
-declare class UsersResource extends BaseResource {
+declare class AuthorizationResource extends BaseResource {
     constructor(client: AxiosInstance);
     /**
-     * Get a list of users
+     * Try API Authorization
      */
-    getAll(params?: PaginationParams): Promise<PaginatedResponse<User>>;
-    /**
-     * Get a user by ID
-     */
-    getById(id: string): Promise<User>;
-    /**
-     * Create a new user
-     */
-    create(data: CreateUserDto): Promise<User>;
-    /**
-     * Update a user
-     */
-    update(id: string, data: UpdateUserDto): Promise<User>;
-}
-
-interface Product {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    createdAt: string;
-    updatedAt: string;
-}
-interface CreateProductDto {
-    name: string;
-    description: string;
-    price: number;
-}
-interface UpdateProductDto {
-    name?: string;
-    description?: string;
-    price?: number;
-}
-declare class ProductsResource extends BaseResource {
-    constructor(client: AxiosInstance);
-    /**
-     * Get a list of products
-     */
-    getAll(params?: PaginationParams): Promise<PaginatedResponse<Product>>;
-    /**
-     * Get a product by ID
-     */
-    getById(id: string): Promise<Product>;
-    /**
-     * Create a new product
-     */
-    create(data: CreateProductDto): Promise<Product>;
-    /**
-     * Update a product
-     */
-    update(id: string, data: UpdateProductDto): Promise<Product>;
+    try(): Promise<PaginatedResponse<AuthorizationTrialReturn>>;
 }
 
 interface ContabullOptions {
@@ -116,11 +53,10 @@ interface ContabullOptions {
 declare class Contabull {
     private client;
     private options;
-    users: UsersResource;
-    products: ProductsResource;
+    authorization: AuthorizationResource;
     constructor(options: ContabullOptions);
     private signRequest;
     request<T>(config: AxiosRequestConfig): Promise<T>;
 }
 
-export { ApiError, Contabull, ContabullOptions, CreateProductDto, CreateUserDto, PaginatedResponse, PaginationParams, Product, ProductsResource, UpdateProductDto, UpdateUserDto, User, UsersResource };
+export { ApiError, AuthorizationResource, Contabull, ContabullOptions, PaginatedResponse, PaginationParams };
