@@ -70,7 +70,7 @@ var validateOrThrow = async (schema, data) => {
   const validation = await safeAwait(schema.parseAsync(data));
   if (validation.error) {
     console.error(validation.error.issues);
-    throw new Error(`Error while validating your input data : ${validation.error.issues}`);
+    throw new Error(`Error while validating your input data : ${JSON.stringify(validation.error.issues)}`);
   }
   return validation.result;
 };

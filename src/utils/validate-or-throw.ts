@@ -6,7 +6,7 @@ export const validateOrThrow = async <T extends ZodObject<any> | ZodEffects<any>
 
   if (validation.error) {
     console.error((validation.error as any).issues);
-    throw new Error(`Error while validating your input data : ${(validation.error as any).issues}`);
+    throw new Error(`Error while validating your input data : ${JSON.stringify((validation.error as any).issues)}`);
   }
 
   return validation.result;
