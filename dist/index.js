@@ -107,7 +107,8 @@ var safeAwait = async (promise) => {
 var validateOrThrow = async (schema, data) => {
   const validation = await safeAwait(schema.parseAsync(data));
   if (validation.error) {
-    throw new Error(validation.error.issues);
+    console.error(validation.error.issues);
+    throw new Error(`Error while validating your input data : ${validation.error.issues}`);
   }
   return validation.result;
 };

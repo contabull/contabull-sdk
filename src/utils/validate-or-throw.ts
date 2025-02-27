@@ -5,7 +5,8 @@ export const validateOrThrow = async <T extends ZodObject<any> | ZodEffects<any>
   const validation = await safeAwait(schema.parseAsync(data));
 
   if (validation.error) {
-    throw new Error((validation.error as any).issues);
+    console.error((validation.error as any).issues);
+    throw new Error(`Error while validating your input data : ${(validation.error as any).issues}`);
   }
 
   return validation.result;
