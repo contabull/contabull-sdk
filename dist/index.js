@@ -30,15 +30,15 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  AuthorizationResource: () => AuthorizationResource,
+  Authorization: () => Authorization,
   Contabull: () => Contabull
 });
 module.exports = __toCommonJS(src_exports);
 
 // src/sdk.ts
 var import_axios = __toESM(require("axios"));
-var import_jsonwebtoken = __toESM(require("jsonwebtoken"));
 var import_sha256 = __toESM(require("crypto-js/sha256"));
+var import_jsonwebtoken = __toESM(require("jsonwebtoken"));
 
 // src/resources/base-resource.ts
 var BaseResource = class {
@@ -69,7 +69,7 @@ var BaseResource = class {
 };
 
 // src/resources/authorization.ts
-var AuthorizationResource = class extends BaseResource {
+var Authorization = class extends BaseResource {
   constructor(client) {
     super(client, "/try");
   }
@@ -92,15 +92,10 @@ var Contabull = class {
       baseURL: this.options.baseUrl,
       timeout: this.options.timeout
     });
-    if (this.options.debugMode) {
-      console.log(options);
-    }
-    this.authorization = new AuthorizationResource(this.client);
+    this.authorization = new Authorization(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
@@ -114,6 +109,10 @@ var Contabull = class {
         return Promise.reject(apiError);
       }
     );
+  }
+  async request(config) {
+    const response = await this.client.request(config);
+    return response.data;
   }
   async signRequest(config) {
     const url = new URL(config.url, this.options.baseUrl);
@@ -134,13 +133,9 @@ var Contabull = class {
     config.headers["Authorization"] = `Bearer ${signedJwt}`;
     return config;
   }
-  async request(config) {
-    const response = await this.client.request(config);
-    return response.data;
-  }
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  AuthorizationResource,
+  Authorization,
   Contabull
 });

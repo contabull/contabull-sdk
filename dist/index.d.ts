@@ -14,7 +14,7 @@ declare abstract class BaseResource {
 interface AuthorizationTrialReturn {
     message: string;
 }
-declare class AuthorizationResource extends BaseResource {
+declare class Authorization extends BaseResource {
     constructor(client: AxiosInstance);
     /**
      * Try API Authorization
@@ -27,15 +27,14 @@ interface ContabullOptions {
     apiKey: string;
     privateKey: string;
     timeout?: number;
-    debugMode?: boolean;
 }
 declare class Contabull {
     private client;
     private options;
-    authorization: AuthorizationResource;
+    authorization: Authorization;
     constructor(options: ContabullOptions);
-    private signRequest;
     request<T>(config: AxiosRequestConfig): Promise<T>;
+    private signRequest;
 }
 
 interface ApiError {
@@ -60,4 +59,4 @@ interface PaginatedResponse<T> {
     };
 }
 
-export { ApiError, AuthorizationResource, Contabull, ContabullOptions, PaginatedResponse, PaginationParams };
+export { ApiError, Authorization, Contabull, ContabullOptions, PaginatedResponse, PaginationParams };

@@ -1,7 +1,7 @@
 // src/sdk.ts
 import axios from "axios";
-import jwt from "jsonwebtoken";
 import SHA256 from "crypto-js/sha256";
+import jwt from "jsonwebtoken";
 
 // src/resources/base-resource.ts
 var BaseResource = class {
@@ -32,7 +32,7 @@ var BaseResource = class {
 };
 
 // src/resources/authorization.ts
-var AuthorizationResource = class extends BaseResource {
+var Authorization = class extends BaseResource {
   constructor(client) {
     super(client, "/try");
   }
@@ -55,15 +55,10 @@ var Contabull = class {
       baseURL: this.options.baseUrl,
       timeout: this.options.timeout
     });
-    if (this.options.debugMode) {
-      console.log(options);
-    }
-    this.authorization = new AuthorizationResource(this.client);
+    this.authorization = new Authorization(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
@@ -77,6 +72,10 @@ var Contabull = class {
         return Promise.reject(apiError);
       }
     );
+  }
+  async request(config) {
+    const response = await this.client.request(config);
+    return response.data;
   }
   async signRequest(config) {
     const url = new URL(config.url, this.options.baseUrl);
@@ -97,12 +96,8 @@ var Contabull = class {
     config.headers["Authorization"] = `Bearer ${signedJwt}`;
     return config;
   }
-  async request(config) {
-    const response = await this.client.request(config);
-    return response.data;
-  }
 };
 export {
-  AuthorizationResource,
+  Authorization,
   Contabull
 };
