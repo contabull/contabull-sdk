@@ -7,13 +7,13 @@ interface AuthorizationTrialReturn {
 
 export class Authorization extends BaseResource {
   constructor(client: AxiosInstance) {
-    super(client, "/try")
+    super(client, "/auth")
   }
 
   /**
    * Try API Authorization
    */
   async try(): Promise<AuthorizationTrialReturn> {
-    return this.get<AuthorizationTrialReturn>('');
+    return this.get<AuthorizationTrialReturn>('/try');
   }
 }

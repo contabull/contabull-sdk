@@ -71,13 +71,13 @@ var BaseResource = class {
 // src/resources/authorization.ts
 var Authorization = class extends BaseResource {
   constructor(client) {
-    super(client, "/try");
+    super(client, "/auth");
   }
   /**
    * Try API Authorization
    */
   async try() {
-    return this.get("");
+    return this.get("/try");
   }
 };
 
