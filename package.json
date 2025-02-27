@@ -1,0 +1,51 @@
+{
+  "name": "contabull-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Contabull API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "lint": "eslint src --ext .ts",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "contabull",
+    "api",
+    "sdk",
+    "nestjs",
+    "typescript"
+  ],
+  "author": "Contabull",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/crypto-js": "^4.2.2",
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.37.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "axios": "^1.8.1",
+    "crypto-js": "^4.2.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
