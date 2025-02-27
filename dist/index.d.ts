@@ -11,6 +11,33 @@ declare abstract class BaseResource {
     protected delete<T>(path: string): Promise<T>;
 }
 
+interface AuthorizationTrialReturn {
+    message: string;
+}
+declare class AuthorizationResource extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Try API Authorization
+     */
+    try(): Promise<AuthorizationTrialReturn>;
+}
+
+interface ContabullOptions {
+    baseUrl: string;
+    apiKey: string;
+    privateKey: string;
+    timeout?: number;
+    debugMode?: boolean;
+}
+declare class Contabull {
+    private client;
+    private options;
+    authorization: AuthorizationResource;
+    constructor(options: ContabullOptions);
+    private signRequest;
+    request<T>(config: AxiosRequestConfig): Promise<T>;
+}
+
 interface ApiError {
     status: number;
     message: string;
@@ -31,33 +58,6 @@ interface PaginatedResponse<T> {
         limit: number;
         totalPages: number;
     };
-}
-
-interface AuthorizationTrialReturn {
-    message: string;
-}
-declare class AuthorizationResource extends BaseResource {
-    constructor(client: AxiosInstance);
-    /**
-     * Try API Authorization
-     */
-    try(): Promise<PaginatedResponse<AuthorizationTrialReturn>>;
-}
-
-interface ContabullOptions {
-    baseUrl: string;
-    apiKey: string;
-    privateKey: string;
-    timeout?: number;
-    debugMode?: boolean;
-}
-declare class Contabull {
-    private client;
-    private options;
-    authorization: AuthorizationResource;
-    constructor(options: ContabullOptions);
-    private signRequest;
-    request<T>(config: AxiosRequestConfig): Promise<T>;
 }
 
 export { ApiError, AuthorizationResource, Contabull, ContabullOptions, PaginatedResponse, PaginationParams };
