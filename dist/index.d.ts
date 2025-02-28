@@ -51,17 +51,17 @@ declare enum Currency {
 }
 
 declare const ChargeCreateSchemaDto: z.ZodObject<{
-    accountId: z.ZodString;
+    account: z.ZodString;
     amount: z.ZodNumber;
     currency: z.ZodNativeEnum<typeof Currency>;
     externalId: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    accountId: string;
+    account: string;
     amount: number;
     currency: Currency;
     externalId?: string | undefined;
 }, {
-    accountId: string;
+    account: string;
     amount: number;
     currency: Currency;
     externalId?: string | undefined;

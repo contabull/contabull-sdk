@@ -6,7 +6,7 @@ import { BaseResource } from "./base-resource";
 
 export const ChargeCreateSchemaDto = z
   .object({
-    accountId: z.string(),
+    account: z.string(),
     amount: z.number().positive(),
     currency: z.nativeEnum(Currency),
     externalId: z.string().optional(),

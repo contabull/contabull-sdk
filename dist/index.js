@@ -115,7 +115,7 @@ var validateOrThrow = async (schema, data) => {
 
 // src/resources/charges.ts
 var ChargeCreateSchemaDto = import_zod.z.object({
-  accountId: import_zod.z.string(),
+  account: import_zod.z.string(),
   amount: import_zod.z.number().positive(),
   currency: import_zod.z.nativeEnum(Currency),
   externalId: import_zod.z.string().optional()
