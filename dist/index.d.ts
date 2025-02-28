@@ -52,19 +52,137 @@ declare enum Currency {
 
 declare const ChargeCreateSchemaDto: z.ZodObject<{
     account: z.ZodString;
+    document: z.ZodOptional<z.ZodString>;
     amount: z.ZodNumber;
     currency: z.ZodNativeEnum<typeof Currency>;
     externalId: z.ZodOptional<z.ZodString>;
+    customer: z.ZodObject<{
+        name: z.ZodString;
+        cpfCnpj: z.ZodString;
+        type: z.ZodEnum<["individual", "company"]>;
+        address: z.ZodOptional<z.ZodObject<{
+            street: z.ZodString;
+            number: z.ZodString;
+            postalCode: z.ZodString;
+            complement: z.ZodOptional<z.ZodString>;
+            neighborhood: z.ZodOptional<z.ZodString>;
+            city: z.ZodString;
+            countryCode: z.ZodString;
+            state: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        }, {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        type: "individual" | "company";
+        name: string;
+        cpfCnpj: string;
+        address?: {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        } | undefined;
+    }, {
+        type: "individual" | "company";
+        name: string;
+        cpfCnpj: string;
+        address?: {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        } | undefined;
+    }>;
+    taxes: z.ZodOptional<z.ZodObject<{
+        fine: z.ZodOptional<z.ZodNumber>;
+        interest: z.ZodOptional<z.ZodNumber>;
+    }, "strip", z.ZodTypeAny, {
+        fine?: number | undefined;
+        interest?: number | undefined;
+    }, {
+        fine?: number | undefined;
+        interest?: number | undefined;
+    }>>;
+    dueAt: z.ZodOptional<z.ZodString>;
+    expiredAt: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     account: string;
     amount: number;
     currency: Currency;
+    customer: {
+        type: "individual" | "company";
+        name: string;
+        cpfCnpj: string;
+        address?: {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        } | undefined;
+    };
+    document?: string | undefined;
     externalId?: string | undefined;
+    taxes?: {
+        fine?: number | undefined;
+        interest?: number | undefined;
+    } | undefined;
+    dueAt?: string | undefined;
+    expiredAt?: string | undefined;
 }, {
     account: string;
     amount: number;
     currency: Currency;
+    customer: {
+        type: "individual" | "company";
+        name: string;
+        cpfCnpj: string;
+        address?: {
+            number: string;
+            street: string;
+            postalCode: string;
+            city: string;
+            countryCode: string;
+            complement?: string | undefined;
+            neighborhood?: string | undefined;
+            state?: string | undefined;
+        } | undefined;
+    };
+    document?: string | undefined;
     externalId?: string | undefined;
+    taxes?: {
+        fine?: number | undefined;
+        interest?: number | undefined;
+    } | undefined;
+    dueAt?: string | undefined;
+    expiredAt?: string | undefined;
 }>;
 type ChargeCreateDto = z.infer<typeof ChargeCreateSchemaDto>;
 interface CreateChargeReturn {

@@ -76,11 +76,35 @@ var validateOrThrow = async (schema, data) => {
 };
 
 // src/resources/charges.ts
+var ChargeCreateCustomerAddressSchema = z.object({
+  street: z.string(),
+  number: z.string(),
+  postalCode: z.string(),
+  complement: z.string().optional(),
+  neighborhood: z.string().optional(),
+  city: z.string(),
+  countryCode: z.string(),
+  state: z.string().optional()
+});
+var ChargeCreateCustomerSchema = z.object({
+  name: z.string(),
+  cpfCnpj: z.string(),
+  type: z.enum(["individual", "company"]),
+  address: ChargeCreateCustomerAddressSchema.optional()
+});
 var ChargeCreateSchemaDto = z.object({
   account: z.string(),
+  document: z.string().optional(),
   amount: z.number().positive(),
   currency: z.nativeEnum(Currency),
-  externalId: z.string().optional()
+  externalId: z.string().optional(),
+  customer: ChargeCreateCustomerSchema,
+  taxes: z.object({
+    fine: z.number().optional(),
+    interest: z.number().optional()
+  }).optional(),
+  dueAt: z.string().optional(),
+  expiredAt: z.string().optional()
 });
 var Charges = class extends BaseResource {
   constructor(client) {
