@@ -243,9 +243,9 @@ declare class Charges extends BaseResource {
      */
     getOne(id: string): Promise<ChargeGetResponseDto>;
     /**
-     * Download a charge as PDF
+     * Download the charge's PDF as array buffer
      */
-    download(id: string): Promise<Buffer>;
+    downloadPdfAsBuffer(id: string): Promise<Buffer>;
     /**
      * Cancel a charge
      */

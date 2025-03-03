@@ -177,9 +177,9 @@ var Charges = class extends BaseResource {
     return this.get(`?uid=${id}`);
   }
   /**
-   * Download a charge as PDF
+   * Download the charge's PDF as array buffer
    */
-  async download(id) {
+  async downloadPdfAsBuffer(id) {
     return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
   }
   /**

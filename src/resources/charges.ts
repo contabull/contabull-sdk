@@ -27,9 +27,9 @@ export class Charges extends BaseResource {
   }
 
   /**
-   * Download a charge as PDF
+   * Download the charge's PDF as array buffer
    */
-  async download(id: string): Promise<Buffer> {
+  async downloadPdfAsBuffer(id: string): Promise<Buffer> {
     return this.get<any>(`/download?uid=${id}`, { responseType: 'arraybuffer' });
   }
 
