@@ -173,7 +173,7 @@ var Charges = class extends BaseResource {
    * Get a charge
    */
   async getOne(id) {
-    return this.get(`/${id}`);
+    return this.get(`/?uid=${id}`);
   }
 };
 
