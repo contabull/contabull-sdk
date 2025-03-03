@@ -31,6 +31,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var src_exports = {};
 __export(src_exports, {
   Authorization: () => Authorization,
+  ChargeStatus: () => ChargeStatus,
   Contabull: () => Contabull,
   Currency: () => Currency
 });
@@ -82,17 +83,6 @@ var Authorization = class extends BaseResource {
   }
 };
 
-// src/resources/charges.ts
-var import_zod = require("zod");
-
-// src/types.ts
-var Currency = /* @__PURE__ */ ((Currency2) => {
-  Currency2["BRL"] = "BRL";
-  Currency2["USD"] = "USD";
-  Currency2["EUR"] = "EUR";
-  return Currency2;
-})(Currency || {});
-
 // src/utils/safe-await.ts
 var safeAwait = async (promise) => {
   try {
@@ -113,7 +103,25 @@ var validateOrThrow = async (schema, data) => {
   return validation.result;
 };
 
-// src/resources/charges.ts
+// src/dto/charges/ChargeCreateDto.ts
+var import_zod = require("zod");
+
+// src/types.ts
+var Currency = /* @__PURE__ */ ((Currency2) => {
+  Currency2["BRL"] = "BRL";
+  Currency2["USD"] = "USD";
+  Currency2["EUR"] = "EUR";
+  return Currency2;
+})(Currency || {});
+var ChargeStatus = /* @__PURE__ */ ((ChargeStatus2) => {
+  ChargeStatus2["CREATED"] = "CREATED";
+  ChargeStatus2["CREATED_WAITING"] = "CREATED_WAITING";
+  ChargeStatus2["PAID"] = "PAID";
+  ChargeStatus2["CANCELLED"] = "CANCELLED";
+  return ChargeStatus2;
+})(ChargeStatus || {});
+
+// src/dto/charges/ChargeCreateDto.ts
 var ChargeCreateCustomerAddressSchema = import_zod.z.object({
   street: import_zod.z.string(),
   number: import_zod.z.string(),
@@ -130,7 +138,7 @@ var ChargeCreateCustomerSchema = import_zod.z.object({
   type: import_zod.z.enum(["individual", "company"]),
   address: ChargeCreateCustomerAddressSchema.optional()
 });
-var ChargeCreateSchemaDto = import_zod.z.object({
+var ChargeCreateSchema = import_zod.z.object({
   account: import_zod.z.string(),
   document: import_zod.z.string().optional(),
   amount: import_zod.z.number().positive(),
@@ -144,6 +152,24 @@ var ChargeCreateSchemaDto = import_zod.z.object({
   dueAt: import_zod.z.string().optional(),
   expiredAt: import_zod.z.string().optional()
 });
+var ChargeCreateResponseSchema = import_zod.z.object({
+  id: import_zod.z.string(),
+  success: import_zod.z.boolean()
+});
+
+// src/dto/charges/ChargeGetDto.ts
+var import_zod2 = require("zod");
+var ChargeGetSchema = import_zod2.z.object({
+  id: import_zod2.z.string()
+});
+var ChargeGetResponseSchema = import_zod2.z.object({
+  status: import_zod2.z.nativeEnum(ChargeStatus),
+  boleto: import_zod2.z.object({
+    barCode: import_zod2.z.string()
+  }).optional()
+});
+
+// src/resources/charges.ts
 var Charges = class extends BaseResource {
   constructor(client) {
     super(client, "/charges");
@@ -152,8 +178,15 @@ var Charges = class extends BaseResource {
    * Create a new charge
    */
   async create(data) {
-    await validateOrThrow(ChargeCreateSchemaDto, data);
+    await validateOrThrow(ChargeCreateSchema, data);
     return this.post("/create", data);
+  }
+  /**
+   * Get a charge
+   */
+  async getOne(data) {
+    await validateOrThrow(ChargeGetResponseSchema, data);
+    return this.get(`/${data.id}`);
   }
 };
 
@@ -214,6 +247,7 @@ var Contabull = class {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Authorization,
+  ChargeStatus,
   Contabull,
   Currency
 });

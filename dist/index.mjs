@@ -44,17 +44,6 @@ var Authorization = class extends BaseResource {
   }
 };
 
-// src/resources/charges.ts
-import { z } from "zod";
-
-// src/types.ts
-var Currency = /* @__PURE__ */ ((Currency2) => {
-  Currency2["BRL"] = "BRL";
-  Currency2["USD"] = "USD";
-  Currency2["EUR"] = "EUR";
-  return Currency2;
-})(Currency || {});
-
 // src/utils/safe-await.ts
 var safeAwait = async (promise) => {
   try {
@@ -75,7 +64,25 @@ var validateOrThrow = async (schema, data) => {
   return validation.result;
 };
 
-// src/resources/charges.ts
+// src/dto/charges/ChargeCreateDto.ts
+import { z } from "zod";
+
+// src/types.ts
+var Currency = /* @__PURE__ */ ((Currency2) => {
+  Currency2["BRL"] = "BRL";
+  Currency2["USD"] = "USD";
+  Currency2["EUR"] = "EUR";
+  return Currency2;
+})(Currency || {});
+var ChargeStatus = /* @__PURE__ */ ((ChargeStatus2) => {
+  ChargeStatus2["CREATED"] = "CREATED";
+  ChargeStatus2["CREATED_WAITING"] = "CREATED_WAITING";
+  ChargeStatus2["PAID"] = "PAID";
+  ChargeStatus2["CANCELLED"] = "CANCELLED";
+  return ChargeStatus2;
+})(ChargeStatus || {});
+
+// src/dto/charges/ChargeCreateDto.ts
 var ChargeCreateCustomerAddressSchema = z.object({
   street: z.string(),
   number: z.string(),
@@ -92,7 +99,7 @@ var ChargeCreateCustomerSchema = z.object({
   type: z.enum(["individual", "company"]),
   address: ChargeCreateCustomerAddressSchema.optional()
 });
-var ChargeCreateSchemaDto = z.object({
+var ChargeCreateSchema = z.object({
   account: z.string(),
   document: z.string().optional(),
   amount: z.number().positive(),
@@ -106,6 +113,24 @@ var ChargeCreateSchemaDto = z.object({
   dueAt: z.string().optional(),
   expiredAt: z.string().optional()
 });
+var ChargeCreateResponseSchema = z.object({
+  id: z.string(),
+  success: z.boolean()
+});
+
+// src/dto/charges/ChargeGetDto.ts
+import { z as z2 } from "zod";
+var ChargeGetSchema = z2.object({
+  id: z2.string()
+});
+var ChargeGetResponseSchema = z2.object({
+  status: z2.nativeEnum(ChargeStatus),
+  boleto: z2.object({
+    barCode: z2.string()
+  }).optional()
+});
+
+// src/resources/charges.ts
 var Charges = class extends BaseResource {
   constructor(client) {
     super(client, "/charges");
@@ -114,8 +139,15 @@ var Charges = class extends BaseResource {
    * Create a new charge
    */
   async create(data) {
-    await validateOrThrow(ChargeCreateSchemaDto, data);
+    await validateOrThrow(ChargeCreateSchema, data);
     return this.post("/create", data);
+  }
+  /**
+   * Get a charge
+   */
+  async getOne(data) {
+    await validateOrThrow(ChargeGetResponseSchema, data);
+    return this.get(`/${data.id}`);
   }
 };
 
@@ -175,6 +207,7 @@ var Contabull = class {
 };
 export {
   Authorization,
+  ChargeStatus,
   Contabull,
   Currency
 };

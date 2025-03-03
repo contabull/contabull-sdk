@@ -49,8 +49,14 @@ declare enum Currency {
     USD = "USD",
     EUR = "EUR"
 }
+declare enum ChargeStatus {
+    CREATED = "CREATED",
+    CREATED_WAITING = "CREATED_WAITING",
+    PAID = "PAID",
+    CANCELLED = "CANCELLED"
+}
 
-declare const ChargeCreateSchemaDto: z.ZodObject<{
+declare const ChargeCreateSchema: z.ZodObject<{
     account: z.ZodString;
     document: z.ZodOptional<z.ZodString>;
     amount: z.ZodNumber;
@@ -184,16 +190,59 @@ declare const ChargeCreateSchemaDto: z.ZodObject<{
     dueAt?: string | undefined;
     expiredAt?: string | undefined;
 }>;
-type ChargeCreateDto = z.infer<typeof ChargeCreateSchemaDto>;
-interface CreateChargeReturn {
-    message: string;
-}
+declare const ChargeCreateResponseSchema: z.ZodObject<{
+    id: z.ZodString;
+    success: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    success: boolean;
+}, {
+    id: string;
+    success: boolean;
+}>;
+type ChargeCreateDto = z.infer<typeof ChargeCreateSchema>;
+type ChargeCreateResponseDto = z.infer<typeof ChargeCreateResponseSchema>;
+
+declare const ChargeGetSchema: z.ZodObject<{
+    id: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+}, {
+    id: string;
+}>;
+type ChargeGetDto = z.infer<typeof ChargeGetSchema>;
+declare const ChargeGetResponseSchema: z.ZodObject<{
+    status: z.ZodNativeEnum<typeof ChargeStatus>;
+    boleto: z.ZodOptional<z.ZodObject<{
+        barCode: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        barCode: string;
+    }, {
+        barCode: string;
+    }>>;
+}, "strip", z.ZodTypeAny, {
+    status: ChargeStatus;
+    boleto?: {
+        barCode: string;
+    } | undefined;
+}, {
+    status: ChargeStatus;
+    boleto?: {
+        barCode: string;
+    } | undefined;
+}>;
+type ChargeGetResponseDto = z.infer<typeof ChargeGetResponseSchema>;
+
 declare class Charges extends BaseResource {
     constructor(client: AxiosInstance);
     /**
      * Create a new charge
      */
-    create(data: ChargeCreateDto): Promise<CreateChargeReturn>;
+    create(data: ChargeCreateDto): Promise<ChargeCreateResponseDto>;
+    /**
+     * Get a charge
+     */
+    getOne(data: ChargeGetDto): Promise<ChargeGetResponseDto>;
 }
 
 interface ContabullOptions {
@@ -212,4 +261,4 @@ declare class Contabull {
     private signRequest;
 }
 
-export { ApiError, Authorization, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams };
+export { ApiError, Authorization, ChargeStatus, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams };
