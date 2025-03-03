@@ -180,6 +180,8 @@ var Charges = class extends BaseResource {
    */
   async download(id) {
     const response = await this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
+    console.log(response);
+    console.log(response.data);
     return response.data;
   }
 };

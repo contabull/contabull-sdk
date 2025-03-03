@@ -3,6 +3,7 @@ import { validateOrThrow } from '../utils/validate-or-throw';
 import { BaseResource } from "./base-resource";
 import { ChargeCreateSchema, ChargeCreateDto, ChargeCreateResponseDto } from "../dto/charges/ChargeCreateDto";
 import { ChargeGetResponseDto } from "../dto/charges/ChargeGetDto";
+import { log } from "console";
 
 export class Charges extends BaseResource {
   constructor(client: AxiosInstance) {
@@ -30,6 +31,9 @@ export class Charges extends BaseResource {
    */
   async download(id: string): Promise<Buffer> {
     const response = await this.get<any>(`/download?uid=${id}`, { responseType: 'arraybuffer' });
+
+    console.log(response);
+    console.log(response.data);
 
     return response.data;
   }
