@@ -157,18 +157,6 @@ var ChargeCreateResponseSchema = import_zod.z.object({
   success: import_zod.z.boolean()
 });
 
-// src/dto/charges/ChargeGetDto.ts
-var import_zod2 = require("zod");
-var ChargeGetSchema = import_zod2.z.object({
-  id: import_zod2.z.string()
-});
-var ChargeGetResponseSchema = import_zod2.z.object({
-  status: import_zod2.z.nativeEnum(ChargeStatus),
-  boleto: import_zod2.z.object({
-    barCode: import_zod2.z.string()
-  }).optional()
-});
-
 // src/resources/charges.ts
 var Charges = class extends BaseResource {
   constructor(client) {
@@ -184,9 +172,8 @@ var Charges = class extends BaseResource {
   /**
    * Get a charge
    */
-  async getOne(data) {
-    await validateOrThrow(ChargeGetResponseSchema, data);
-    return this.get(`/${data.id}`);
+  async getOne(id) {
+    return this.get(`/${id}`);
   }
 };
 

@@ -203,14 +203,6 @@ declare const ChargeCreateResponseSchema: z.ZodObject<{
 type ChargeCreateDto = z.infer<typeof ChargeCreateSchema>;
 type ChargeCreateResponseDto = z.infer<typeof ChargeCreateResponseSchema>;
 
-declare const ChargeGetSchema: z.ZodObject<{
-    id: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    id: string;
-}, {
-    id: string;
-}>;
-type ChargeGetDto = z.infer<typeof ChargeGetSchema>;
 declare const ChargeGetResponseSchema: z.ZodObject<{
     status: z.ZodNativeEnum<typeof ChargeStatus>;
     boleto: z.ZodOptional<z.ZodObject<{
@@ -242,7 +234,7 @@ declare class Charges extends BaseResource {
     /**
      * Get a charge
      */
-    getOne(data: ChargeGetDto): Promise<ChargeGetResponseDto>;
+    getOne(id: string): Promise<ChargeGetResponseDto>;
 }
 
 interface ContabullOptions {

@@ -118,18 +118,6 @@ var ChargeCreateResponseSchema = z.object({
   success: z.boolean()
 });
 
-// src/dto/charges/ChargeGetDto.ts
-import { z as z2 } from "zod";
-var ChargeGetSchema = z2.object({
-  id: z2.string()
-});
-var ChargeGetResponseSchema = z2.object({
-  status: z2.nativeEnum(ChargeStatus),
-  boleto: z2.object({
-    barCode: z2.string()
-  }).optional()
-});
-
 // src/resources/charges.ts
 var Charges = class extends BaseResource {
   constructor(client) {
@@ -145,9 +133,8 @@ var Charges = class extends BaseResource {
   /**
    * Get a charge
    */
-  async getOne(data) {
-    await validateOrThrow(ChargeGetResponseSchema, data);
-    return this.get(`/${data.id}`);
+  async getOne(id) {
+    return this.get(`/${id}`);
   }
 };
 
