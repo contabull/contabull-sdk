@@ -5,7 +5,7 @@ declare abstract class BaseResource {
     protected client: AxiosInstance;
     protected basePath: string;
     constructor(client: AxiosInstance, basePath: string);
-    protected get<T>(path: string, params?: Record<string, any>): Promise<T>;
+    protected get<T>(path: string, config?: AxiosRequestConfig): Promise<T>;
     protected post<T>(path: string, data?: any): Promise<T>;
     protected put<T>(path: string, data?: any): Promise<T>;
     protected patch<T>(path: string, data?: any): Promise<T>;

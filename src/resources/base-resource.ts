@@ -1,4 +1,4 @@
-import type { AxiosInstance } from "axios"
+import type { AxiosInstance, AxiosRequestConfig } from "axios"
 
 export abstract class BaseResource {
   protected client: AxiosInstance
@@ -9,8 +9,8 @@ export abstract class BaseResource {
     this.basePath = basePath
   }
 
-  protected async get<T>(path: string, params?: Record<string, any>): Promise<T> {
-    const response = await this.client.get<T>(`${this.basePath}${path}`, { params });
+  protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
+    const response = await this.client.get<T>(`${this.basePath}${path}`, config);
 
     return response.data;
   }

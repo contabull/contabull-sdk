@@ -9,8 +9,8 @@ var BaseResource = class {
     this.client = client;
     this.basePath = basePath;
   }
-  async get(path, params) {
-    const response = await this.client.get(`${this.basePath}${path}`, { params });
+  async get(path, config) {
+    const response = await this.client.get(`${this.basePath}${path}`, config);
     return response.data;
   }
   async post(path, data) {
@@ -140,7 +140,7 @@ var Charges = class extends BaseResource {
    * Download a charge as PDF
    */
   async download(id) {
-    return this.get(`/download?uid=${id}`, { responseType: "blob" });
+    return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
   }
 };
 
