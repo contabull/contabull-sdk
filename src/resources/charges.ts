@@ -3,6 +3,7 @@ import { validateOrThrow } from '../utils/validate-or-throw';
 import { BaseResource } from "./base-resource";
 import { ChargeCreateSchema, ChargeCreateDto, ChargeCreateResponseDto } from "../dto/charges/ChargeCreateDto";
 import { ChargeGetResponseDto } from "../dto/charges/ChargeGetDto";
+import { ChargeCancelResponseDto } from "../dto/charges/ChargeCancelDto";
 
 export class Charges extends BaseResource {
   constructor(client: AxiosInstance) {
@@ -30,5 +31,12 @@ export class Charges extends BaseResource {
    */
   async download(id: string): Promise<Buffer> {
     return this.get<any>(`/download?uid=${id}`, { responseType: 'arraybuffer' });
+  }
+
+  /**
+   * Cancel a charge
+   */
+  async cancel(id: string): Promise<ChargeCancelResponseDto> {
+    return this.delete<ChargeCancelResponseDto>(`?uid=${id}`);
   }
 }

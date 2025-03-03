@@ -142,6 +142,12 @@ var Charges = class extends BaseResource {
   async download(id) {
     return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
   }
+  /**
+   * Cancel a charge
+   */
+  async cancel(id) {
+    return this.delete(`?uid=${id}`);
+  }
 };
 
 // src/sdk.ts

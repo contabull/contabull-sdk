@@ -225,6 +225,10 @@ declare const ChargeGetResponseSchema: z.ZodObject<{
 }>;
 type ChargeGetResponseDto = z.infer<typeof ChargeGetResponseSchema>;
 
+interface ChargeCancelResponseDto {
+    success: boolean;
+}
+
 declare class Charges extends BaseResource {
     constructor(client: AxiosInstance);
     /**
@@ -239,6 +243,10 @@ declare class Charges extends BaseResource {
      * Download a charge as PDF
      */
     download(id: string): Promise<Buffer>;
+    /**
+     * Cancel a charge
+     */
+    cancel(id: string): Promise<ChargeCancelResponseDto>;
 }
 
 interface ContabullOptions {
