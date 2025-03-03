@@ -179,7 +179,8 @@ var Charges = class extends BaseResource {
    * Download a charge as PDF
    */
   async download(id) {
-    return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
+    const response = await this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
+    return Buffer.from(response.data, "binary");
   }
 };
 
