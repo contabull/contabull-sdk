@@ -237,7 +237,7 @@ declare class Charges extends BaseResource {
     /**
      * Create a new charge
      */
-    create(data: ChargeCreateDto): Promise<ChargeCreateResponseDto>;
+    create(data: ChargeCreateDto, sourceKey?: string): Promise<ChargeCreateResponseDto>;
     /**
      * Get a charge
      */

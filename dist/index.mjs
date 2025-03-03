@@ -127,9 +127,9 @@ var Charges = class extends BaseResource {
   /**
    * Create a new charge
    */
-  async create(data) {
+  async create(data, sourceKey) {
     await validateOrThrow(ChargeCreateSchema, data);
-    return this.post("/create", data);
+    return this.post(`/create${sourceKey ? `?sourceKey=${sourceKey}` : ""}`, data);
   }
   /**
    * Get a charge

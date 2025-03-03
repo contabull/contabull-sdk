@@ -13,10 +13,10 @@ export class Charges extends BaseResource {
   /**
    * Create a new charge
    */
-  async create(data: ChargeCreateDto): Promise<ChargeCreateResponseDto> {
+  async create(data: ChargeCreateDto, sourceKey?: string): Promise<ChargeCreateResponseDto> {
     await validateOrThrow(ChargeCreateSchema, data);
 
-    return this.post<ChargeCreateResponseDto>('/create', data);
+    return this.post<ChargeCreateResponseDto>(`/create${sourceKey ? `?sourceKey=${sourceKey}` : ''}`, data);
   }
 
   /**
