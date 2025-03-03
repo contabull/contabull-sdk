@@ -22,7 +22,7 @@ export const ChargeCreateCustomerSchema = z.object({
 export const ChargeCreateSchema = z.object({
   account: z.string(),
   document: z.string().optional(),
-  amount: z.number().positive(),
+  amountCents: z.number().positive(),
   currency: z.nativeEnum(Currency),
   method: z.enum(['boleto']),
   externalId: z.string().optional(),

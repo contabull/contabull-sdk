@@ -59,7 +59,7 @@ declare enum ChargeStatus {
 declare const ChargeCreateSchema: z.ZodObject<{
     account: z.ZodString;
     document: z.ZodOptional<z.ZodString>;
-    amount: z.ZodNumber;
+    amountCents: z.ZodNumber;
     currency: z.ZodNativeEnum<typeof Currency>;
     method: z.ZodEnum<["boleto"]>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -138,7 +138,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     expiredAt: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     account: string;
-    amount: number;
+    amountCents: number;
     currency: Currency;
     method: "boleto";
     customer: {
@@ -166,7 +166,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     expiredAt?: string | undefined;
 }, {
     account: string;
-    amount: number;
+    amountCents: number;
     currency: Currency;
     method: "boleto";
     customer: {

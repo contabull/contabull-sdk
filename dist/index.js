@@ -141,7 +141,7 @@ var ChargeCreateCustomerSchema = import_zod.z.object({
 var ChargeCreateSchema = import_zod.z.object({
   account: import_zod.z.string(),
   document: import_zod.z.string().optional(),
-  amount: import_zod.z.number().positive(),
+  amountCents: import_zod.z.number().positive(),
   currency: import_zod.z.nativeEnum(Currency),
   method: import_zod.z.enum(["boleto"]),
   externalId: import_zod.z.string().optional(),
