@@ -235,6 +235,10 @@ declare class Charges extends BaseResource {
      * Get a charge
      */
     getOne(id: string): Promise<ChargeGetResponseDto>;
+    /**
+     * Download a charge as PDF
+     */
+    download(id: string): Promise<Buffer>;
 }
 
 interface ContabullOptions {

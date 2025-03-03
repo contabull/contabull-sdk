@@ -24,4 +24,11 @@ export class Charges extends BaseResource {
   async getOne(id: string): Promise<ChargeGetResponseDto> {
     return this.get<ChargeGetResponseDto>(`?uid=${id}`);
   }
+
+  /**
+   * Download a charge as PDF
+   */
+  async download(id: string): Promise<Buffer> {
+    return this.get<Buffer>(`/download?uid=${id}`, { responseType: 'arraybuffer' });
+  }
 }

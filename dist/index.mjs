@@ -136,6 +136,12 @@ var Charges = class extends BaseResource {
   async getOne(id) {
     return this.get(`?uid=${id}`);
   }
+  /**
+   * Download a charge as PDF
+   */
+  async download(id) {
+    return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
+  }
 };
 
 // src/sdk.ts
