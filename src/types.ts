@@ -26,4 +26,9 @@ export interface PaginatedResponse<T> {
 
 export enum Currency { BRL = 'BRL', USD = 'USD', EUR = 'EUR' }
 
-// Add more common types as needed
+export enum ChargeStatus {
+  CREATED = 'CREATED',
+  CREATED_WAITING = 'CREATED_WAITING',
+  PAID = 'PAID',
+  CANCELLED = 'CANCELLED'
+}
