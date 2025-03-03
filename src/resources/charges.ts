@@ -31,6 +31,6 @@ export class Charges extends BaseResource {
   async download(id: string): Promise<Buffer> {
     const response = await this.get<any>(`/download?uid=${id}`, { responseType: 'arraybuffer' });
 
-    return Buffer.from(response.data, 'binary');
+    return response.data;
   }
 }
