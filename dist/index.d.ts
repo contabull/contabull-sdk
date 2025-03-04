@@ -65,7 +65,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     externalId: z.ZodOptional<z.ZodString>;
     customer: z.ZodObject<{
         name: z.ZodString;
-        cpfCnpj: z.ZodString;
+        document: z.ZodString;
         type: z.ZodEnum<["individual", "company"]>;
         address: z.ZodOptional<z.ZodObject<{
             street: z.ZodString;
@@ -98,7 +98,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     }, "strip", z.ZodTypeAny, {
         type: "individual" | "company";
         name: string;
-        cpfCnpj: string;
+        document: string;
         address?: {
             number: string;
             street: string;
@@ -112,7 +112,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     }, {
         type: "individual" | "company";
         name: string;
-        cpfCnpj: string;
+        document: string;
         address?: {
             number: string;
             street: string;
@@ -144,7 +144,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     customer: {
         type: "individual" | "company";
         name: string;
-        cpfCnpj: string;
+        document: string;
         address?: {
             number: string;
             street: string;
@@ -172,7 +172,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     customer: {
         type: "individual" | "company";
         name: string;
-        cpfCnpj: string;
+        document: string;
         address?: {
             number: string;
             street: string;

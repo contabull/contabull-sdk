@@ -1,6 +1,6 @@
 {
-  "name": "contabull-sdk",
-  "version": "0.1.0",
+  "name": "@contabull/sdk",
+  "version": "1.0.0",
   "description": "TypeScript SDK for Contabull API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

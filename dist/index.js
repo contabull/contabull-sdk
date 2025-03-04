@@ -134,7 +134,7 @@ var ChargeCreateCustomerAddressSchema = import_zod.z.object({
 });
 var ChargeCreateCustomerSchema = import_zod.z.object({
   name: import_zod.z.string(),
-  cpfCnpj: import_zod.z.string(),
+  document: import_zod.z.string(),
   type: import_zod.z.enum(["individual", "company"]),
   address: ChargeCreateCustomerAddressSchema.optional()
 });

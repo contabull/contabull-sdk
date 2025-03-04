@@ -95,7 +95,7 @@ var ChargeCreateCustomerAddressSchema = z.object({
 });
 var ChargeCreateCustomerSchema = z.object({
   name: z.string(),
-  cpfCnpj: z.string(),
+  document: z.string(),
   type: z.enum(["individual", "company"]),
   address: ChargeCreateCustomerAddressSchema.optional()
 });
