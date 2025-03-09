@@ -104,7 +104,7 @@ var ChargeCreateSchema = z.object({
   document: z.string().optional(),
   amountCents: z.number().positive(),
   currency: z.nativeEnum(Currency),
-  method: z.enum(["boleto"]),
+  methods: z.array(z.enum(["boleto", "pix"])),
   externalId: z.string().optional(),
   customer: ChargeCreateCustomerSchema,
   taxes: z.object({

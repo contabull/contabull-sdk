@@ -61,7 +61,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     document: z.ZodOptional<z.ZodString>;
     amountCents: z.ZodNumber;
     currency: z.ZodNativeEnum<typeof Currency>;
-    method: z.ZodEnum<["boleto"]>;
+    methods: z.ZodArray<z.ZodEnum<["boleto", "pix"]>, "many">;
     externalId: z.ZodOptional<z.ZodString>;
     customer: z.ZodObject<{
         name: z.ZodString;
@@ -140,7 +140,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     account: string;
     amountCents: number;
     currency: Currency;
-    method: "boleto";
+    methods: ("boleto" | "pix")[];
     customer: {
         type: "individual" | "company";
         name: string;
@@ -168,7 +168,7 @@ declare const ChargeCreateSchema: z.ZodObject<{
     account: string;
     amountCents: number;
     currency: Currency;
-    method: "boleto";
+    methods: ("boleto" | "pix")[];
     customer: {
         type: "individual" | "company";
         name: string;
