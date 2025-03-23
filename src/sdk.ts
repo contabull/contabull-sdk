@@ -1,42 +1,43 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios"
-import SHA256 from "crypto-js/sha256"
-import jwt from "jsonwebtoken"
-import { Authorization } from "./resources"
-import { Charges } from './resources/charges';
-import type { ApiError } from "./types"
+import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
+import SHA256 from "crypto-js/sha256";
+import jwt from "jsonwebtoken";
+import { Authorization, Charges, Transactions } from "./resources";
+import type { ApiError } from "./types";
 
 export interface ContabullOptions {
-  baseUrl: string
-  apiKey: string
-  privateKey: string
-  timeout?: number
+  baseUrl: string;
+  apiKey: string;
+  privateKey: string;
+  timeout?: number;
 }
 
 export class Contabull {
-  private client: AxiosInstance
-  private options: ContabullOptions
+  private client: AxiosInstance;
+  private options: ContabullOptions;
 
   public authorization: Authorization;
   public charges: Charges;
+  public transactions: Transactions;
 
   constructor(options: ContabullOptions) {
     this.options = {
       timeout: 10000,
       ...options,
-    }
+    };
 
     this.client = axios.create({
       baseURL: this.options.baseUrl,
       timeout: this.options.timeout,
-    })
+    });
 
     this.authorization = new Authorization(this.client);
     this.charges = new Charges(this.client);
+    this.transactions = new Transactions(this.client);
 
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
-      (error: any) => Promise.reject(error),
-    )
+      (error: any) => Promise.reject(error)
+    );
 
     this.client.interceptors.response.use(
       (response: any) => response,
@@ -46,10 +47,10 @@ export class Contabull {
           message: error.response?.data?.message || error.message,
           data: error.response?.data || null,
           originalError: error,
-        }
+        };
         return Promise.reject(apiError);
-      },
-    )
+      }
+    );
   }
 
   async request<T>(config: AxiosRequestConfig): Promise<T> {
@@ -74,7 +75,9 @@ export class Contabull {
       bodyHash: bodyHash,
     };
 
-    const signedJwt = jwt.sign(jwtPayload, this.options.privateKey, { algorithm: "RS256" });
+    const signedJwt = jwt.sign(jwtPayload, this.options.privateKey, {
+      algorithm: "RS256",
+    });
 
     config.headers = config.headers || {};
     config.headers["X-API-KEY"] = this.options.apiKey;

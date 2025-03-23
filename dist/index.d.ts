@@ -55,10 +55,28 @@ declare enum ChargeStatus {
     PAID = "PAID",
     CANCELLED = "CANCELLED"
 }
+declare enum PaymentStatus {
+    created = "created",
+    emv_generated = "emv_generated",
+    payer_viewed = "payer_viewed",
+    succeeded = "succeeded",
+    failed = "failed",
+    disputed = "disputed",
+    processing_refund = "processing_refund",
+    processing = "processing",
+    refunded = "refunded",
+    incomplete = "incomplete",
+    refund_failed = "refund_failed",
+    cancelled = "cancelled"
+}
+declare enum TransactionType {
+    inbound = "inbound",
+    outbound = "outbound",
+    refund = "refund"
+}
 
 declare const ChargeCreateSchema: z.ZodObject<{
     account: z.ZodString;
-    document: z.ZodOptional<z.ZodString>;
     amountCents: z.ZodNumber;
     currency: z.ZodNativeEnum<typeof Currency>;
     methods: z.ZodArray<z.ZodEnum<["boleto", "pix"]>, "many">;
@@ -156,7 +174,6 @@ declare const ChargeCreateSchema: z.ZodObject<{
             state?: string | undefined;
         } | undefined;
     };
-    document?: string | undefined;
     externalId?: string | undefined;
     taxes?: {
         fine?: number | undefined;
@@ -184,7 +201,6 @@ declare const ChargeCreateSchema: z.ZodObject<{
             state?: string | undefined;
         } | undefined;
     };
-    document?: string | undefined;
     externalId?: string | undefined;
     taxes?: {
         fine?: number | undefined;
@@ -252,6 +268,171 @@ declare class Charges extends BaseResource {
     cancel(id: string): Promise<ChargeCancelResponseDto>;
 }
 
+declare const TransactionGetAllSchema: z.ZodObject<{
+    customerId: z.ZodOptional<z.ZodString>;
+    accountId: z.ZodOptional<z.ZodString>;
+    type: z.ZodEnum<[TransactionType.inbound, TransactionType.outbound, "all"]>;
+    query: z.ZodOptional<z.ZodString>;
+    from: z.ZodOptional<z.ZodDate>;
+    to: z.ZodOptional<z.ZodDate>;
+    page: z.ZodNumber;
+    status: z.ZodEnum<[PaymentStatus.succeeded, PaymentStatus.incomplete, PaymentStatus.failed, PaymentStatus.refunded, PaymentStatus.created, "all"]>;
+}, "strip", z.ZodTypeAny, {
+    type: TransactionType.inbound | TransactionType.outbound | "all";
+    status: "all" | PaymentStatus.created | PaymentStatus.succeeded | PaymentStatus.failed | PaymentStatus.refunded | PaymentStatus.incomplete;
+    page: number;
+    customerId?: string | undefined;
+    accountId?: string | undefined;
+    query?: string | undefined;
+    from?: Date | undefined;
+    to?: Date | undefined;
+}, {
+    type: TransactionType.inbound | TransactionType.outbound | "all";
+    status: "all" | PaymentStatus.created | PaymentStatus.succeeded | PaymentStatus.failed | PaymentStatus.refunded | PaymentStatus.incomplete;
+    page: number;
+    customerId?: string | undefined;
+    accountId?: string | undefined;
+    query?: string | undefined;
+    from?: Date | undefined;
+    to?: Date | undefined;
+}>;
+declare const TransactionGetAllResponseSchema: z.ZodObject<{
+    transactions: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        amount: z.ZodNumber;
+        customer: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            email: z.ZodString;
+            cpfCnpj: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        }, {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        }>;
+        payerName: z.ZodString;
+        payerCpfCnpj: z.ZodString;
+        description: z.ZodString;
+        e2eID: z.ZodString;
+        status: z.ZodNativeEnum<typeof PaymentStatus>;
+        method: z.ZodString;
+        type: z.ZodNativeEnum<typeof TransactionType>;
+        currency: z.ZodNativeEnum<typeof Currency>;
+        bankAccountId: z.ZodString;
+        fees: z.ZodNumber;
+        disputed: z.ZodBoolean;
+    }, "strip", z.ZodTypeAny, {
+        type: TransactionType;
+        status: PaymentStatus;
+        disputed: boolean;
+        currency: Currency;
+        customer: {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        };
+        id: string;
+        amount: number;
+        payerName: string;
+        payerCpfCnpj: string;
+        description: string;
+        e2eID: string;
+        method: string;
+        bankAccountId: string;
+        fees: number;
+    }, {
+        type: TransactionType;
+        status: PaymentStatus;
+        disputed: boolean;
+        currency: Currency;
+        customer: {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        };
+        id: string;
+        amount: number;
+        payerName: string;
+        payerCpfCnpj: string;
+        description: string;
+        e2eID: string;
+        method: string;
+        bankAccountId: string;
+        fees: number;
+    }>, "many">;
+    total: z.ZodNumber;
+    totalPages: z.ZodNumber;
+    currentPage: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    transactions: {
+        type: TransactionType;
+        status: PaymentStatus;
+        disputed: boolean;
+        currency: Currency;
+        customer: {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        };
+        id: string;
+        amount: number;
+        payerName: string;
+        payerCpfCnpj: string;
+        description: string;
+        e2eID: string;
+        method: string;
+        bankAccountId: string;
+        fees: number;
+    }[];
+    total: number;
+    totalPages: number;
+    currentPage: number;
+}, {
+    transactions: {
+        type: TransactionType;
+        status: PaymentStatus;
+        disputed: boolean;
+        currency: Currency;
+        customer: {
+            name: string;
+            id: string;
+            email: string;
+            cpfCnpj: string;
+        };
+        id: string;
+        amount: number;
+        payerName: string;
+        payerCpfCnpj: string;
+        description: string;
+        e2eID: string;
+        method: string;
+        bankAccountId: string;
+        fees: number;
+    }[];
+    total: number;
+    totalPages: number;
+    currentPage: number;
+}>;
+type TransactionGetAllDto = z.infer<typeof TransactionGetAllSchema>;
+type TransactionGetAllResponseDto = z.infer<typeof TransactionGetAllResponseSchema>;
+
+declare class Transactions extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Get all transactions
+     */
+    getAll(data: TransactionGetAllDto): Promise<TransactionGetAllResponseDto>;
+}
+
 interface ContabullOptions {
     baseUrl: string;
     apiKey: string;
@@ -263,9 +444,10 @@ declare class Contabull {
     private options;
     authorization: Authorization;
     charges: Charges;
+    transactions: Transactions;
     constructor(options: ContabullOptions);
     request<T>(config: AxiosRequestConfig): Promise<T>;
     private signRequest;
 }
 
-export { ApiError, Authorization, ChargeStatus, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams };
+export { ApiError, Authorization, ChargeStatus, Charges, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams, PaymentStatus, TransactionType, Transactions };

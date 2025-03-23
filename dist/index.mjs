@@ -81,6 +81,27 @@ var ChargeStatus = /* @__PURE__ */ ((ChargeStatus2) => {
   ChargeStatus2["CANCELLED"] = "CANCELLED";
   return ChargeStatus2;
 })(ChargeStatus || {});
+var PaymentStatus = /* @__PURE__ */ ((PaymentStatus2) => {
+  PaymentStatus2["created"] = "created";
+  PaymentStatus2["emv_generated"] = "emv_generated";
+  PaymentStatus2["payer_viewed"] = "payer_viewed";
+  PaymentStatus2["succeeded"] = "succeeded";
+  PaymentStatus2["failed"] = "failed";
+  PaymentStatus2["disputed"] = "disputed";
+  PaymentStatus2["processing_refund"] = "processing_refund";
+  PaymentStatus2["processing"] = "processing";
+  PaymentStatus2["refunded"] = "refunded";
+  PaymentStatus2["incomplete"] = "incomplete";
+  PaymentStatus2["refund_failed"] = "refund_failed";
+  PaymentStatus2["cancelled"] = "cancelled";
+  return PaymentStatus2;
+})(PaymentStatus || {});
+var TransactionType = /* @__PURE__ */ ((TransactionType2) => {
+  TransactionType2["inbound"] = "inbound";
+  TransactionType2["outbound"] = "outbound";
+  TransactionType2["refund"] = "refund";
+  return TransactionType2;
+})(TransactionType || {});
 
 // src/dto/charges/ChargeCreateDto.ts
 var ChargeCreateCustomerAddressSchema = z.object({
@@ -101,7 +122,6 @@ var ChargeCreateCustomerSchema = z.object({
 });
 var ChargeCreateSchema = z.object({
   account: z.string(),
-  document: z.string().optional(),
   amountCents: z.number().positive(),
   currency: z.nativeEnum(Currency),
   methods: z.array(z.enum(["boleto", "pix"])),
@@ -151,6 +171,70 @@ var Charges = class extends BaseResource {
   }
 };
 
+// src/dto/transactions/TransactionGetAllDto.ts
+import { z as z2 } from "zod";
+var TransactionGetAllSchema = z2.object({
+  customerId: z2.string().optional(),
+  accountId: z2.string().optional(),
+  type: z2.enum(["inbound" /* inbound */, "outbound" /* outbound */, "all"]),
+  query: z2.string().optional(),
+  from: z2.coerce.date().optional(),
+  to: z2.coerce.date().optional(),
+  page: z2.coerce.number(),
+  status: z2.enum([
+    "succeeded" /* succeeded */,
+    "incomplete" /* incomplete */,
+    "failed" /* failed */,
+    "refunded" /* refunded */,
+    "created" /* created */,
+    "all"
+  ])
+});
+var TransactionCustomerSchema = z2.object({
+  id: z2.string(),
+  name: z2.string(),
+  email: z2.string(),
+  cpfCnpj: z2.string()
+});
+var TransactionSchema = z2.object({
+  id: z2.string(),
+  amount: z2.number(),
+  customer: TransactionCustomerSchema,
+  payerName: z2.string(),
+  payerCpfCnpj: z2.string(),
+  description: z2.string(),
+  e2eID: z2.string(),
+  status: z2.nativeEnum(PaymentStatus),
+  method: z2.string(),
+  type: z2.nativeEnum(TransactionType),
+  currency: z2.nativeEnum(Currency),
+  bankAccountId: z2.string(),
+  fees: z2.number(),
+  disputed: z2.boolean()
+});
+var TransactionGetAllResponseSchema = z2.object({
+  transactions: z2.array(TransactionSchema),
+  total: z2.number(),
+  totalPages: z2.number(),
+  currentPage: z2.number()
+});
+
+// src/resources/transactions.ts
+var Transactions = class extends BaseResource {
+  constructor(client) {
+    super(client, "/transactions");
+  }
+  /**
+   * Get all transactions
+   */
+  async getAll(data) {
+    await validateOrThrow(TransactionGetAllSchema, data);
+    return this.get("", {
+      params: data
+    });
+  }
+};
+
 // src/sdk.ts
 var Contabull = class {
   constructor(options) {
@@ -164,6 +248,7 @@ var Contabull = class {
     });
     this.authorization = new Authorization(this.client);
     this.charges = new Charges(this.client);
+    this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
       (error) => Promise.reject(error)
@@ -198,7 +283,9 @@ var Contabull = class {
       sub: this.options.apiKey,
       bodyHash
     };
-    const signedJwt = jwt.sign(jwtPayload, this.options.privateKey, { algorithm: "RS256" });
+    const signedJwt = jwt.sign(jwtPayload, this.options.privateKey, {
+      algorithm: "RS256"
+    });
     config.headers = config.headers || {};
     config.headers["X-API-KEY"] = this.options.apiKey;
     config.headers["Authorization"] = `Bearer ${signedJwt}`;
@@ -208,6 +295,10 @@ var Contabull = class {
 export {
   Authorization,
   ChargeStatus,
+  Charges,
   Contabull,
-  Currency
+  Currency,
+  PaymentStatus,
+  TransactionType,
+  Transactions
 };

@@ -32,8 +32,12 @@ var src_exports = {};
 __export(src_exports, {
   Authorization: () => Authorization,
   ChargeStatus: () => ChargeStatus,
+  Charges: () => Charges,
   Contabull: () => Contabull,
-  Currency: () => Currency
+  Currency: () => Currency,
+  PaymentStatus: () => PaymentStatus,
+  TransactionType: () => TransactionType,
+  Transactions: () => Transactions
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -120,6 +124,27 @@ var ChargeStatus = /* @__PURE__ */ ((ChargeStatus2) => {
   ChargeStatus2["CANCELLED"] = "CANCELLED";
   return ChargeStatus2;
 })(ChargeStatus || {});
+var PaymentStatus = /* @__PURE__ */ ((PaymentStatus2) => {
+  PaymentStatus2["created"] = "created";
+  PaymentStatus2["emv_generated"] = "emv_generated";
+  PaymentStatus2["payer_viewed"] = "payer_viewed";
+  PaymentStatus2["succeeded"] = "succeeded";
+  PaymentStatus2["failed"] = "failed";
+  PaymentStatus2["disputed"] = "disputed";
+  PaymentStatus2["processing_refund"] = "processing_refund";
+  PaymentStatus2["processing"] = "processing";
+  PaymentStatus2["refunded"] = "refunded";
+  PaymentStatus2["incomplete"] = "incomplete";
+  PaymentStatus2["refund_failed"] = "refund_failed";
+  PaymentStatus2["cancelled"] = "cancelled";
+  return PaymentStatus2;
+})(PaymentStatus || {});
+var TransactionType = /* @__PURE__ */ ((TransactionType2) => {
+  TransactionType2["inbound"] = "inbound";
+  TransactionType2["outbound"] = "outbound";
+  TransactionType2["refund"] = "refund";
+  return TransactionType2;
+})(TransactionType || {});
 
 // src/dto/charges/ChargeCreateDto.ts
 var ChargeCreateCustomerAddressSchema = import_zod.z.object({
@@ -140,7 +165,6 @@ var ChargeCreateCustomerSchema = import_zod.z.object({
 });
 var ChargeCreateSchema = import_zod.z.object({
   account: import_zod.z.string(),
-  document: import_zod.z.string().optional(),
   amountCents: import_zod.z.number().positive(),
   currency: import_zod.z.nativeEnum(Currency),
   methods: import_zod.z.array(import_zod.z.enum(["boleto", "pix"])),
@@ -190,6 +214,70 @@ var Charges = class extends BaseResource {
   }
 };
 
+// src/dto/transactions/TransactionGetAllDto.ts
+var import_zod2 = require("zod");
+var TransactionGetAllSchema = import_zod2.z.object({
+  customerId: import_zod2.z.string().optional(),
+  accountId: import_zod2.z.string().optional(),
+  type: import_zod2.z.enum(["inbound" /* inbound */, "outbound" /* outbound */, "all"]),
+  query: import_zod2.z.string().optional(),
+  from: import_zod2.z.coerce.date().optional(),
+  to: import_zod2.z.coerce.date().optional(),
+  page: import_zod2.z.coerce.number(),
+  status: import_zod2.z.enum([
+    "succeeded" /* succeeded */,
+    "incomplete" /* incomplete */,
+    "failed" /* failed */,
+    "refunded" /* refunded */,
+    "created" /* created */,
+    "all"
+  ])
+});
+var TransactionCustomerSchema = import_zod2.z.object({
+  id: import_zod2.z.string(),
+  name: import_zod2.z.string(),
+  email: import_zod2.z.string(),
+  cpfCnpj: import_zod2.z.string()
+});
+var TransactionSchema = import_zod2.z.object({
+  id: import_zod2.z.string(),
+  amount: import_zod2.z.number(),
+  customer: TransactionCustomerSchema,
+  payerName: import_zod2.z.string(),
+  payerCpfCnpj: import_zod2.z.string(),
+  description: import_zod2.z.string(),
+  e2eID: import_zod2.z.string(),
+  status: import_zod2.z.nativeEnum(PaymentStatus),
+  method: import_zod2.z.string(),
+  type: import_zod2.z.nativeEnum(TransactionType),
+  currency: import_zod2.z.nativeEnum(Currency),
+  bankAccountId: import_zod2.z.string(),
+  fees: import_zod2.z.number(),
+  disputed: import_zod2.z.boolean()
+});
+var TransactionGetAllResponseSchema = import_zod2.z.object({
+  transactions: import_zod2.z.array(TransactionSchema),
+  total: import_zod2.z.number(),
+  totalPages: import_zod2.z.number(),
+  currentPage: import_zod2.z.number()
+});
+
+// src/resources/transactions.ts
+var Transactions = class extends BaseResource {
+  constructor(client) {
+    super(client, "/transactions");
+  }
+  /**
+   * Get all transactions
+   */
+  async getAll(data) {
+    await validateOrThrow(TransactionGetAllSchema, data);
+    return this.get("", {
+      params: data
+    });
+  }
+};
+
 // src/sdk.ts
 var Contabull = class {
   constructor(options) {
@@ -203,6 +291,7 @@ var Contabull = class {
     });
     this.authorization = new Authorization(this.client);
     this.charges = new Charges(this.client);
+    this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),
       (error) => Promise.reject(error)
@@ -237,7 +326,9 @@ var Contabull = class {
       sub: this.options.apiKey,
       bodyHash
     };
-    const signedJwt = import_jsonwebtoken.default.sign(jwtPayload, this.options.privateKey, { algorithm: "RS256" });
+    const signedJwt = import_jsonwebtoken.default.sign(jwtPayload, this.options.privateKey, {
+      algorithm: "RS256"
+    });
     config.headers = config.headers || {};
     config.headers["X-API-KEY"] = this.options.apiKey;
     config.headers["Authorization"] = `Bearer ${signedJwt}`;
@@ -248,6 +339,10 @@ var Contabull = class {
 0 && (module.exports = {
   Authorization,
   ChargeStatus,
+  Charges,
   Contabull,
-  Currency
+  Currency,
+  PaymentStatus,
+  TransactionType,
+  Transactions
 });

@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { Currency } from '../../types';
+import { z } from "zod";
+import { Currency } from "../../types";
 
 export const ChargeCreateCustomerAddressSchema = z.object({
   street: z.string(),
@@ -11,28 +11,27 @@ export const ChargeCreateCustomerAddressSchema = z.object({
   countryCode: z.string(),
   state: z.string().optional(),
 });
-  
+
 export const ChargeCreateCustomerSchema = z.object({
   name: z.string(),
   document: z.string(),
-  type: z.enum(['individual', 'company']),
+  type: z.enum(["individual", "company"]),
   address: ChargeCreateCustomerAddressSchema.optional(),
 });
 
 export const ChargeCreateSchema = z.object({
   account: z.string(),
-  document: z.string().optional(),
   amountCents: z.number().positive(),
   currency: z.nativeEnum(Currency),
-  methods: z.array(z.enum(['boleto', 'pix'])),
+  methods: z.array(z.enum(["boleto", "pix"])),
   externalId: z.string().optional(),
   customer: ChargeCreateCustomerSchema,
   taxes: z
-      .object({
+    .object({
       fine: z.number().optional(),
       interest: z.number().optional(),
-      })
-      .optional(),
+    })
+    .optional(),
   dueAt: z.string().optional(),
   expiredAt: z.string().optional(),
 });
@@ -43,4 +42,6 @@ export const ChargeCreateResponseSchema = z.object({
 });
 
 export type ChargeCreateDto = z.infer<typeof ChargeCreateSchema>;
-export type ChargeCreateResponseDto = z.infer<typeof ChargeCreateResponseSchema>;
+export type ChargeCreateResponseDto = z.infer<
+  typeof ChargeCreateResponseSchema
+>;
