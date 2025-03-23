@@ -269,8 +269,8 @@ declare class Charges extends BaseResource {
 }
 
 declare const TransactionGetAllSchema: z.ZodObject<{
-    customerId: z.ZodOptional<z.ZodString>;
-    accountId: z.ZodOptional<z.ZodString>;
+    customer: z.ZodOptional<z.ZodString>;
+    account: z.ZodOptional<z.ZodString>;
     type: z.ZodEnum<[TransactionType.inbound, TransactionType.outbound, "all"]>;
     query: z.ZodOptional<z.ZodString>;
     from: z.ZodOptional<z.ZodDate>;
@@ -281,8 +281,8 @@ declare const TransactionGetAllSchema: z.ZodObject<{
     type: TransactionType.inbound | TransactionType.outbound | "all";
     status: "all" | PaymentStatus.created | PaymentStatus.succeeded | PaymentStatus.failed | PaymentStatus.refunded | PaymentStatus.incomplete;
     page: number;
-    customerId?: string | undefined;
-    accountId?: string | undefined;
+    account?: string | undefined;
+    customer?: string | undefined;
     query?: string | undefined;
     from?: Date | undefined;
     to?: Date | undefined;
@@ -290,8 +290,8 @@ declare const TransactionGetAllSchema: z.ZodObject<{
     type: TransactionType.inbound | TransactionType.outbound | "all";
     status: "all" | PaymentStatus.created | PaymentStatus.succeeded | PaymentStatus.failed | PaymentStatus.refunded | PaymentStatus.incomplete;
     page: number;
-    customerId?: string | undefined;
-    accountId?: string | undefined;
+    account?: string | undefined;
+    customer?: string | undefined;
     query?: string | undefined;
     from?: Date | undefined;
     to?: Date | undefined;

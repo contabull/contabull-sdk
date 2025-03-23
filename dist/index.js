@@ -217,8 +217,8 @@ var Charges = class extends BaseResource {
 // src/dto/transactions/TransactionGetAllDto.ts
 var import_zod2 = require("zod");
 var TransactionGetAllSchema = import_zod2.z.object({
-  customerId: import_zod2.z.string().optional(),
-  accountId: import_zod2.z.string().optional(),
+  customer: import_zod2.z.string().optional(),
+  account: import_zod2.z.string().optional(),
   type: import_zod2.z.enum(["inbound" /* inbound */, "outbound" /* outbound */, "all"]),
   query: import_zod2.z.string().optional(),
   from: import_zod2.z.coerce.date().optional(),

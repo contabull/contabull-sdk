@@ -174,8 +174,8 @@ var Charges = class extends BaseResource {
 // src/dto/transactions/TransactionGetAllDto.ts
 import { z as z2 } from "zod";
 var TransactionGetAllSchema = z2.object({
-  customerId: z2.string().optional(),
-  accountId: z2.string().optional(),
+  customer: z2.string().optional(),
+  account: z2.string().optional(),
   type: z2.enum(["inbound" /* inbound */, "outbound" /* outbound */, "all"]),
   query: z2.string().optional(),
   from: z2.coerce.date().optional(),

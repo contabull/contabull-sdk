@@ -2,8 +2,8 @@ import { z } from "zod";
 import { Currency, PaymentStatus, TransactionType } from "../../types";
 
 export const TransactionGetAllSchema = z.object({
-  customerId: z.string().optional(),
-  accountId: z.string().optional(),
+  customer: z.string().optional(),
+  account: z.string().optional(),
   type: z.enum([TransactionType.inbound, TransactionType.outbound, "all"]),
   query: z.string().optional(),
   from: z.coerce.date().optional(),
