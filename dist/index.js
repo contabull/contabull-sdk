@@ -30,6 +30,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
+  Accounts: () => Accounts,
   Authorization: () => Authorization,
   ChargeStatus: () => ChargeStatus,
   Charges: () => Charges,
@@ -71,6 +72,19 @@ var BaseResource = class {
   async delete(path) {
     const response = await this.client.delete(`${this.basePath}${path}`);
     return response.data;
+  }
+};
+
+// src/resources/accounts.ts
+var Accounts = class extends BaseResource {
+  constructor(client) {
+    super(client, "/accounts");
+  }
+  /**
+   * Get all accounts
+   */
+  async getAll() {
+    return this.get("");
   }
 };
 
@@ -290,6 +304,7 @@ var Contabull = class {
       timeout: this.options.timeout
     });
     this.authorization = new Authorization(this.client);
+    this.accounts = new Accounts(this.client);
     this.charges = new Charges(this.client);
     this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
@@ -337,6 +352,7 @@ var Contabull = class {
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  Accounts,
   Authorization,
   ChargeStatus,
   Charges,

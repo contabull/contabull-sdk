@@ -31,6 +31,19 @@ var BaseResource = class {
   }
 };
 
+// src/resources/accounts.ts
+var Accounts = class extends BaseResource {
+  constructor(client) {
+    super(client, "/accounts");
+  }
+  /**
+   * Get all accounts
+   */
+  async getAll() {
+    return this.get("");
+  }
+};
+
 // src/resources/authorization.ts
 var Authorization = class extends BaseResource {
   constructor(client) {
@@ -247,6 +260,7 @@ var Contabull = class {
       timeout: this.options.timeout
     });
     this.authorization = new Authorization(this.client);
+    this.accounts = new Accounts(this.client);
     this.charges = new Charges(this.client);
     this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
@@ -293,6 +307,7 @@ var Contabull = class {
   }
 };
 export {
+  Accounts,
   Authorization,
   ChargeStatus,
   Charges,

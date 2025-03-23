@@ -1,6 +1,48 @@
 import { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { z } from 'zod';
 
+declare const AccountGetAllResponseSchema: z.ZodObject<{
+    label: z.ZodString;
+    kind: z.ZodString;
+    balance: z.ZodObject<{
+        availableBalance: z.ZodNumber;
+        pendingBalance: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        availableBalance: number;
+        pendingBalance: number;
+    }, {
+        availableBalance: number;
+        pendingBalance: number;
+    }>;
+    bankProvider: z.ZodString;
+    digit: z.ZodString;
+    agency: z.ZodString;
+    ispb: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    label: string;
+    kind: string;
+    balance: {
+        availableBalance: number;
+        pendingBalance: number;
+    };
+    bankProvider: string;
+    digit: string;
+    agency: string;
+    ispb: string;
+}, {
+    label: string;
+    kind: string;
+    balance: {
+        availableBalance: number;
+        pendingBalance: number;
+    };
+    bankProvider: string;
+    digit: string;
+    agency: string;
+    ispb: string;
+}>;
+type AccountGetAllResponseDto = z.infer<typeof AccountGetAllResponseSchema>;
+
 declare abstract class BaseResource {
     protected client: AxiosInstance;
     protected basePath: string;
@@ -10,6 +52,14 @@ declare abstract class BaseResource {
     protected put<T>(path: string, data?: any): Promise<T>;
     protected patch<T>(path: string, data?: any): Promise<T>;
     protected delete<T>(path: string): Promise<T>;
+}
+
+declare class Accounts extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Get all accounts
+     */
+    getAll(): Promise<AccountGetAllResponseDto>;
 }
 
 interface AuthorizationTrialReturn {
@@ -443,6 +493,7 @@ declare class Contabull {
     private client;
     private options;
     authorization: Authorization;
+    accounts: Accounts;
     charges: Charges;
     transactions: Transactions;
     constructor(options: ContabullOptions);
@@ -450,4 +501,4 @@ declare class Contabull {
     private signRequest;
 }
 
-export { ApiError, Authorization, ChargeStatus, Charges, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams, PaymentStatus, TransactionType, Transactions };
+export { Accounts, ApiError, Authorization, ChargeStatus, Charges, Contabull, ContabullOptions, Currency, PaginatedResponse, PaginationParams, PaymentStatus, TransactionType, Transactions };
