@@ -5,9 +5,9 @@ import { Accounts, Authorization, Charges, Transactions } from "./resources";
 import type { ApiError } from "./types";
 
 export interface ContabullOptions {
-  baseUrl: string;
   apiKey: string;
   privateKey: string;
+  baseUrl?: string;
   timeout?: number;
 }
 
@@ -28,7 +28,7 @@ export class Contabull {
     };
 
     this.client = axios.create({
-      baseURL: this.options.baseUrl,
+      baseURL: this.options.baseUrl || "https://api.contabull.com",
       timeout: this.options.timeout,
     });
 

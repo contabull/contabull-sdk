@@ -187,10 +187,8 @@ var Charges = class extends BaseResource {
 // src/dto/transactions/TransactionGetAllDto.ts
 import { z as z2 } from "zod";
 var TransactionGetAllSchema = z2.object({
-  customer: z2.string().optional(),
   account: z2.string().optional(),
   type: z2.enum(["inbound" /* inbound */, "outbound" /* outbound */, "all"]),
-  query: z2.string().optional(),
   from: z2.coerce.date().optional(),
   to: z2.coerce.date().optional(),
   page: z2.coerce.number(),
@@ -256,7 +254,7 @@ var Contabull = class {
       ...options
     };
     this.client = axios.create({
-      baseURL: this.options.baseUrl,
+      baseURL: this.options.baseUrl || "https://api.contabull.com",
       timeout: this.options.timeout
     });
     this.authorization = new Authorization(this.client);
