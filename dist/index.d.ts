@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 declare const AccountGetAllResponseSchema: z.ZodObject<{
     label: z.ZodString;
-    kind: z.ZodString;
     balance: z.ZodObject<{
         availableBalance: z.ZodNumber;
         pendingBalance: z.ZodNumber;
@@ -14,32 +13,24 @@ declare const AccountGetAllResponseSchema: z.ZodObject<{
         availableBalance: number;
         pendingBalance: number;
     }>;
+    number: z.ZodString;
     bankProvider: z.ZodString;
-    digit: z.ZodString;
-    agency: z.ZodString;
-    ispb: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    number: string;
     label: string;
-    kind: string;
     balance: {
         availableBalance: number;
         pendingBalance: number;
     };
     bankProvider: string;
-    digit: string;
-    agency: string;
-    ispb: string;
 }, {
+    number: string;
     label: string;
-    kind: string;
     balance: {
         availableBalance: number;
         pendingBalance: number;
     };
     bankProvider: string;
-    digit: string;
-    agency: string;
-    ispb: string;
 }>;
 type AccountGetAllResponseDto = z.infer<typeof AccountGetAllResponseSchema>;
 
