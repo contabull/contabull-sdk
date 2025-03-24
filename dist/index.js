@@ -304,8 +304,8 @@ var Transactions = class extends BaseResource {
 // src/dto/customers/CustomerGetAll.ts
 var import_zod3 = require("zod");
 var CustomerType = /* @__PURE__ */ ((CustomerType2) => {
-  CustomerType2[CustomerType2["COMPANY"] = 0] = "COMPANY";
-  CustomerType2[CustomerType2["INDIVIDUAL"] = 1] = "INDIVIDUAL";
+  CustomerType2["COMPANY"] = "COMPANY";
+  CustomerType2["INDIVIDUAL"] = "INDIVIDUAL";
   return CustomerType2;
 })(CustomerType || {});
 var CustomerGetAllSchema = import_zod3.z.object({

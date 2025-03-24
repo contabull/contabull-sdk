@@ -593,8 +593,8 @@ declare class Transactions extends BaseResource {
 }
 
 declare enum CustomerType {
-    COMPANY = 0,
-    INDIVIDUAL = 1
+    COMPANY = "COMPANY",
+    INDIVIDUAL = "INDIVIDUAL"
 }
 declare const CustomerGetAllSchema: z.ZodObject<{
     type: z.ZodOptional<z.ZodNativeEnum<typeof CustomerType>>;

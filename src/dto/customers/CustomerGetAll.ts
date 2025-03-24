@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export enum CustomerType {
-  COMPANY,
-  INDIVIDUAL,
+  COMPANY = "COMPANY",
+  INDIVIDUAL = "INDIVIDUAL",
 }
 
 export const CustomerGetAllSchema = z.object({
