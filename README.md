@@ -61,20 +61,21 @@ await contabull.accounts.getAll();
 ```json
 [
   {
+    "id": "ald23mvczlp150fdelk4",
     "label": "My Company Celcoin Account",
     "balance": {
       "availableBalance": 6000,
       "pendingBalance": 1000
     },
     "bankProvider": "celcoin",
-    "number": "1234567890"
+    "number": "1234567890",
+    "ispb": "12345669",
+    "agency": "0001"
   }
 ]
 ```
 
-While using the SDK, most of the time you'll have to pass an `account` in query parameters or in the body. The `account` corresponds to the bank account `number`, like shown in the above response example.
-
-You can also find this bank account number in your accounts page of the Contabull's dashboard.
+While using the SDK, most of the time you'll have to pass an `account` in query parameters or in the body. The `account` corresponds to the bank account `id`, like shown in the above response example.
 
 ## Charges
 
@@ -93,7 +94,7 @@ If you're looking for detailed information like the boleto bar code or the PIX, 
 #### Request parameters
 
 - `page` : a **number** corresponding to the current page you're fetching
-- `account` : **string** corresponding to the bank account number
+- `account` : **string** corresponding to the bank account ID
 - `status` : refer to its type
 - `query` _(optional)_ : **string** for search term, you can search by charge's ID, customer's ID, customer name, customer document (cpf, cnpj, ...) and transaction ID
 - `from` _(optional)_ : from the **date** you want to fetch charges (on their created date basis)
@@ -177,7 +178,7 @@ You can list your transactions using this method. This method returns paginated 
 #### Request parameters
 
 - `page` : a **number** corresponding to the current page you're fetching
-- `account` : **string** corresponding to the bank account number
+- `account` : **string** corresponding to the bank account ID
 - `status` : refer to its type,
 - `type` : refer to its type,
 - `from` _(optional)_ : from the **date** you want to fetch transactions
