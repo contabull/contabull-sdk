@@ -40,7 +40,7 @@ var Accounts = class extends BaseResource {
    * Get all accounts
    */
   async getAll() {
-    return this.get("/all");
+    return this.get("");
   }
 };
 
@@ -177,13 +177,13 @@ var Charges = class extends BaseResource {
    * Get all charges
    */
   async getAll(params) {
-    return this.get(`/all`, { params });
+    return this.get("", { params });
   }
   /**
    * Download the charge's PDF as array buffer
    */
   async downloadPdfAsBuffer(id) {
-    return this.get(`/download?uid=${id}`, {
+    return this.get(`/${id}/download`, {
       responseType: "arraybuffer"
     });
   }
@@ -191,7 +191,7 @@ var Charges = class extends BaseResource {
    * Cancel a charge
    */
   async cancel(id) {
-    return this.delete(`?uid=${id}`);
+    return this.delete(`/${id}`);
   }
 };
 
@@ -251,7 +251,7 @@ var Transactions = class extends BaseResource {
    */
   async getAll(params) {
     await validateOrThrow(TransactionGetAllSchema, params);
-    return this.get("/all", {
+    return this.get("", {
       params
     });
   }
@@ -304,7 +304,7 @@ var Customers = class extends BaseResource {
    */
   async getAll(params) {
     await validateOrThrow(CustomerGetAllSchema, params);
-    return this.get("/all", {
+    return this.get("", {
       params
     });
   }

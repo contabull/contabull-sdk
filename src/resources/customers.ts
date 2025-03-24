@@ -18,7 +18,7 @@ export class Customers extends BaseResource {
   async getAll(params: CustomerGetAllDto): Promise<CustomerGetAllResponseDto> {
     await validateOrThrow(CustomerGetAllSchema, params);
 
-    return this.get<CustomerGetAllResponseDto>("/all", {
+    return this.get<CustomerGetAllResponseDto>("", {
       params,
     });
   }

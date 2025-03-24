@@ -44,14 +44,14 @@ export class Charges extends BaseResource {
    * Get all charges
    */
   async getAll(params: ChargeGetAllDto): Promise<ChargeGetAllResponseDto> {
-    return this.get<ChargeGetAllResponseDto>(`/all`, { params });
+    return this.get<ChargeGetAllResponseDto>("", { params });
   }
 
   /**
    * Download the charge's PDF as array buffer
    */
   async downloadPdfAsBuffer(id: string): Promise<Buffer> {
-    return this.get<any>(`/download?uid=${id}`, {
+    return this.get<any>(`/${id}/download`, {
       responseType: "arraybuffer",
     });
   }
@@ -60,6 +60,6 @@ export class Charges extends BaseResource {
    * Cancel a charge
    */
   async cancel(id: string): Promise<ChargeCancelResponseDto> {
-    return this.delete<ChargeCancelResponseDto>(`?uid=${id}`);
+    return this.delete<ChargeCancelResponseDto>(`/${id}`);
   }
 }
