@@ -28,7 +28,7 @@ export class Charges extends BaseResource {
     await validateOrThrow(ChargeCreateSchema, data);
 
     return this.post<ChargeCreateResponseDto>(
-      `/create${sourceKey ? `?sourceKey=${sourceKey}` : ""}`,
+      `${sourceKey ? `?sourceKey=${sourceKey}` : ""}`,
       data
     );
   }
