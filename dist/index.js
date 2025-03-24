@@ -301,6 +301,59 @@ var Transactions = class extends BaseResource {
   }
 };
 
+// src/dto/customers/CustomerGetAll.ts
+var import_zod3 = require("zod");
+var CustomerType = /* @__PURE__ */ ((CustomerType2) => {
+  CustomerType2[CustomerType2["COMPANY"] = 0] = "COMPANY";
+  CustomerType2[CustomerType2["INDIVIDUAL"] = 1] = "INDIVIDUAL";
+  return CustomerType2;
+})(CustomerType || {});
+var CustomerGetAllSchema = import_zod3.z.object({
+  type: import_zod3.z.nativeEnum(CustomerType).optional(),
+  isBeneficiary: import_zod3.z.boolean().optional(),
+  query: import_zod3.z.string().optional(),
+  page: import_zod3.z.coerce.number()
+});
+var CustomerSchema = import_zod3.z.object({
+  id: import_zod3.z.string(),
+  name: import_zod3.z.string(),
+  email: import_zod3.z.string(),
+  document: import_zod3.z.string(),
+  type: import_zod3.z.nativeEnum(CustomerType),
+  isBeneficiary: import_zod3.z.boolean(),
+  addressStreet: import_zod3.z.string(),
+  addressNumber: import_zod3.z.string(),
+  addressNeighborhood: import_zod3.z.string(),
+  addressCity: import_zod3.z.string(),
+  addressState: import_zod3.z.string(),
+  addressPostalCode: import_zod3.z.string(),
+  addressCountryCode: import_zod3.z.string(),
+  createdAt: import_zod3.z.string()
+});
+var CustomerGetAllResponseSchema = import_zod3.z.object({
+  customers: import_zod3.z.array(CustomerSchema),
+  total: import_zod3.z.number(),
+  totalPages: import_zod3.z.number(),
+  currentPage: import_zod3.z.number(),
+  hasMore: import_zod3.z.boolean()
+});
+
+// src/resources/customers.ts
+var Customers = class extends BaseResource {
+  constructor(client) {
+    super(client, "/customers");
+  }
+  /**
+   * Get all customers
+   */
+  async getAll(params) {
+    await validateOrThrow(CustomerGetAllSchema, params);
+    return this.get("/all", {
+      params
+    });
+  }
+};
+
 // src/sdk.ts
 var Contabull = class {
   constructor(options) {
@@ -315,6 +368,7 @@ var Contabull = class {
     this.authorization = new Authorization(this.client);
     this.accounts = new Accounts(this.client);
     this.charges = new Charges(this.client);
+    this.customers = new Customers(this.client);
     this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),

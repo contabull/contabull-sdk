@@ -257,6 +257,59 @@ var Transactions = class extends BaseResource {
   }
 };
 
+// src/dto/customers/CustomerGetAll.ts
+import { z as z3 } from "zod";
+var CustomerType = /* @__PURE__ */ ((CustomerType2) => {
+  CustomerType2[CustomerType2["COMPANY"] = 0] = "COMPANY";
+  CustomerType2[CustomerType2["INDIVIDUAL"] = 1] = "INDIVIDUAL";
+  return CustomerType2;
+})(CustomerType || {});
+var CustomerGetAllSchema = z3.object({
+  type: z3.nativeEnum(CustomerType).optional(),
+  isBeneficiary: z3.boolean().optional(),
+  query: z3.string().optional(),
+  page: z3.coerce.number()
+});
+var CustomerSchema = z3.object({
+  id: z3.string(),
+  name: z3.string(),
+  email: z3.string(),
+  document: z3.string(),
+  type: z3.nativeEnum(CustomerType),
+  isBeneficiary: z3.boolean(),
+  addressStreet: z3.string(),
+  addressNumber: z3.string(),
+  addressNeighborhood: z3.string(),
+  addressCity: z3.string(),
+  addressState: z3.string(),
+  addressPostalCode: z3.string(),
+  addressCountryCode: z3.string(),
+  createdAt: z3.string()
+});
+var CustomerGetAllResponseSchema = z3.object({
+  customers: z3.array(CustomerSchema),
+  total: z3.number(),
+  totalPages: z3.number(),
+  currentPage: z3.number(),
+  hasMore: z3.boolean()
+});
+
+// src/resources/customers.ts
+var Customers = class extends BaseResource {
+  constructor(client) {
+    super(client, "/customers");
+  }
+  /**
+   * Get all customers
+   */
+  async getAll(params) {
+    await validateOrThrow(CustomerGetAllSchema, params);
+    return this.get("/all", {
+      params
+    });
+  }
+};
+
 // src/sdk.ts
 var Contabull = class {
   constructor(options) {
@@ -271,6 +324,7 @@ var Contabull = class {
     this.authorization = new Authorization(this.client);
     this.accounts = new Accounts(this.client);
     this.charges = new Charges(this.client);
+    this.customers = new Customers(this.client);
     this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(
       async (config) => this.signRequest(config),

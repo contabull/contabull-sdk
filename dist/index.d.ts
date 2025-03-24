@@ -592,6 +592,131 @@ declare class Transactions extends BaseResource {
     getAll(params: TransactionGetAllDto): Promise<TransactionGetAllResponseDto>;
 }
 
+declare enum CustomerType {
+    COMPANY = 0,
+    INDIVIDUAL = 1
+}
+declare const CustomerGetAllSchema: z.ZodObject<{
+    type: z.ZodOptional<z.ZodNativeEnum<typeof CustomerType>>;
+    isBeneficiary: z.ZodOptional<z.ZodBoolean>;
+    query: z.ZodOptional<z.ZodString>;
+    page: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    page: number;
+    type?: CustomerType | undefined;
+    query?: string | undefined;
+    isBeneficiary?: boolean | undefined;
+}, {
+    page: number;
+    type?: CustomerType | undefined;
+    query?: string | undefined;
+    isBeneficiary?: boolean | undefined;
+}>;
+declare const CustomerGetAllResponseSchema: z.ZodObject<{
+    customers: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        email: z.ZodString;
+        document: z.ZodString;
+        type: z.ZodNativeEnum<typeof CustomerType>;
+        isBeneficiary: z.ZodBoolean;
+        addressStreet: z.ZodString;
+        addressNumber: z.ZodString;
+        addressNeighborhood: z.ZodString;
+        addressCity: z.ZodString;
+        addressState: z.ZodString;
+        addressPostalCode: z.ZodString;
+        addressCountryCode: z.ZodString;
+        createdAt: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        type: CustomerType;
+        name: string;
+        document: string;
+        id: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }, {
+        type: CustomerType;
+        name: string;
+        document: string;
+        id: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }>, "many">;
+    total: z.ZodNumber;
+    totalPages: z.ZodNumber;
+    currentPage: z.ZodNumber;
+    hasMore: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    customers: {
+        type: CustomerType;
+        name: string;
+        document: string;
+        id: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }[];
+    hasMore: boolean;
+}, {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    customers: {
+        type: CustomerType;
+        name: string;
+        document: string;
+        id: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }[];
+    hasMore: boolean;
+}>;
+type CustomerGetAllDto = z.infer<typeof CustomerGetAllSchema>;
+type CustomerGetAllResponseDto = z.infer<typeof CustomerGetAllResponseSchema>;
+
+declare class Customers extends BaseResource {
+    constructor(client: AxiosInstance);
+    /**
+     * Get all customers
+     */
+    getAll(params: CustomerGetAllDto): Promise<CustomerGetAllResponseDto>;
+}
+
 interface ContabullOptions {
     apiKey: string;
     privateKey: string;
@@ -604,6 +729,7 @@ declare class Contabull {
     authorization: Authorization;
     accounts: Accounts;
     charges: Charges;
+    customers: Customers;
     transactions: Transactions;
     constructor(options: ContabullOptions);
     request<T>(config: AxiosRequestConfig): Promise<T>;
