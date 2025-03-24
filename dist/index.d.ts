@@ -2,6 +2,7 @@ import { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { z } from 'zod';
 
 declare const AccountGetAllResponseSchema: z.ZodObject<{
+    id: z.ZodString;
     label: z.ZodString;
     balance: z.ZodObject<{
         availableBalanceCents: z.ZodNumber;
@@ -15,22 +16,30 @@ declare const AccountGetAllResponseSchema: z.ZodObject<{
     }>;
     number: z.ZodString;
     bankProvider: z.ZodString;
+    ispb: z.ZodString;
+    agency: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     number: string;
+    id: string;
     label: string;
     balance: {
         availableBalanceCents: number;
         pendingBalanceCents: number;
     };
     bankProvider: string;
+    ispb: string;
+    agency: string;
 }, {
     number: string;
+    id: string;
     label: string;
     balance: {
         availableBalanceCents: number;
         pendingBalanceCents: number;
     };
     bankProvider: string;
+    ispb: string;
+    agency: string;
 }>;
 type AccountGetAllResponseDto = z.infer<typeof AccountGetAllResponseSchema>;
 
@@ -310,6 +319,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         expiredAt: z.ZodDate;
         createdAt: z.ZodDate;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         status: ChargeStatus;
         amountCents: number;
         externalId: string;
@@ -318,13 +328,13 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         };
         dueAt: Date;
         expiredAt: Date;
-        id: string;
         transactionId: string;
         paymentMethods: string[];
         taxFine: number;
         taxInterest: number;
         createdAt: Date;
     }, {
+        id: string;
         status: ChargeStatus;
         amountCents: number;
         externalId: string;
@@ -333,7 +343,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         };
         dueAt: Date;
         expiredAt: Date;
-        id: string;
         transactionId: string;
         paymentMethods: string[];
         taxFine: number;
@@ -346,6 +355,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     page: number;
     charges: {
+        id: string;
         status: ChargeStatus;
         amountCents: number;
         externalId: string;
@@ -354,7 +364,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         };
         dueAt: Date;
         expiredAt: Date;
-        id: string;
         transactionId: string;
         paymentMethods: string[];
         taxFine: number;
@@ -366,6 +375,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
 }, {
     page: number;
     charges: {
+        id: string;
         status: ChargeStatus;
         amountCents: number;
         externalId: string;
@@ -374,7 +384,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         };
         dueAt: Date;
         expiredAt: Date;
-        id: string;
         transactionId: string;
         paymentMethods: string[];
         taxFine: number;
@@ -465,13 +474,13 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
             email: z.ZodString;
             cpfCnpj: z.ZodString;
         }, "strip", z.ZodTypeAny, {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         }, {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         }>;
@@ -487,18 +496,18 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         fees: z.ZodNumber;
         disputed: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
         amountCents: number;
         currency: Currency;
         customer: {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         };
-        id: string;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -507,18 +516,18 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         bankAccountId: string;
         fees: number;
     }, {
+        id: string;
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
         amountCents: number;
         currency: Currency;
         customer: {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         };
-        id: string;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -534,18 +543,18 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
     total: number;
     totalPages: number;
     transactions: {
+        id: string;
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
         amountCents: number;
         currency: Currency;
         customer: {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         };
-        id: string;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -559,18 +568,18 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
     total: number;
     totalPages: number;
     transactions: {
+        id: string;
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
         amountCents: number;
         currency: Currency;
         customer: {
-            name: string;
             id: string;
+            name: string;
             email: string;
             cpfCnpj: string;
         };
-        id: string;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -629,10 +638,10 @@ declare const CustomerGetAllResponseSchema: z.ZodObject<{
         addressCountryCode: z.ZodString;
         createdAt: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         type: CustomerType;
         name: string;
         document: string;
-        id: string;
         createdAt: string;
         email: string;
         isBeneficiary: boolean;
@@ -644,10 +653,10 @@ declare const CustomerGetAllResponseSchema: z.ZodObject<{
         addressPostalCode: string;
         addressCountryCode: string;
     }, {
+        id: string;
         type: CustomerType;
         name: string;
         document: string;
-        id: string;
         createdAt: string;
         email: string;
         isBeneficiary: boolean;
@@ -668,10 +677,10 @@ declare const CustomerGetAllResponseSchema: z.ZodObject<{
     totalPages: number;
     currentPage: number;
     customers: {
+        id: string;
         type: CustomerType;
         name: string;
         document: string;
-        id: string;
         createdAt: string;
         email: string;
         isBeneficiary: boolean;
@@ -689,10 +698,10 @@ declare const CustomerGetAllResponseSchema: z.ZodObject<{
     totalPages: number;
     currentPage: number;
     customers: {
+        id: string;
         type: CustomerType;
         name: string;
         document: string;
-        id: string;
         createdAt: string;
         email: string;
         isBeneficiary: boolean;
