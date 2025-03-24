@@ -302,7 +302,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         }>;
         transactionId: z.ZodString;
         paymentMethods: z.ZodArray<z.ZodString, "many">;
-        amount: z.ZodNumber;
+        amountCents: z.ZodNumber;
         taxFine: z.ZodNumber;
         taxInterest: z.ZodNumber;
         status: z.ZodNativeEnum<typeof ChargeStatus>;
@@ -311,6 +311,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         createdAt: z.ZodDate;
     }, "strip", z.ZodTypeAny, {
         status: ChargeStatus;
+        amountCents: number;
         externalId: string;
         customer: {
             name: string;
@@ -320,12 +321,12 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         id: string;
         transactionId: string;
         paymentMethods: string[];
-        amount: number;
         taxFine: number;
         taxInterest: number;
         createdAt: Date;
     }, {
         status: ChargeStatus;
+        amountCents: number;
         externalId: string;
         customer: {
             name: string;
@@ -335,7 +336,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         id: string;
         transactionId: string;
         paymentMethods: string[];
-        amount: number;
         taxFine: number;
         taxInterest: number;
         createdAt: Date;
@@ -347,6 +347,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
     page: number;
     charges: {
         status: ChargeStatus;
+        amountCents: number;
         externalId: string;
         customer: {
             name: string;
@@ -356,7 +357,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         id: string;
         transactionId: string;
         paymentMethods: string[];
-        amount: number;
         taxFine: number;
         taxInterest: number;
         createdAt: Date;
@@ -367,6 +367,7 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
     page: number;
     charges: {
         status: ChargeStatus;
+        amountCents: number;
         externalId: string;
         customer: {
             name: string;
@@ -376,7 +377,6 @@ declare const ChargeGetAllResponseSchema: z.ZodObject<{
         id: string;
         transactionId: string;
         paymentMethods: string[];
-        amount: number;
         taxFine: number;
         taxInterest: number;
         createdAt: Date;

@@ -18,7 +18,7 @@ export const ChargeSchema = z.object({
   }),
   transactionId: z.string(),
   paymentMethods: z.array(z.string()),
-  amount: z.number(),
+  amountCents: z.number(),
   taxFine: z.number(),
   taxInterest: z.number(),
   status: z.nativeEnum(ChargeStatus),
