@@ -11,6 +11,6 @@ export class Accounts extends BaseResource {
    * Get all accounts
    */
   async getAll(): Promise<AccountGetAllResponseDto> {
-    return this.get<AccountGetAllResponseDto>("");
+    return this.get<AccountGetAllResponseDto>("/all");
   }
 }

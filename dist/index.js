@@ -84,7 +84,7 @@ var Accounts = class extends BaseResource {
    * Get all accounts
    */
   async getAll() {
-    return this.get("");
+    return this.get("/all");
   }
 };
 
@@ -295,7 +295,7 @@ var Transactions = class extends BaseResource {
    */
   async getAll(params) {
     await validateOrThrow(TransactionGetAllSchema, params);
-    return this.get("", {
+    return this.get("/all", {
       params
     });
   }

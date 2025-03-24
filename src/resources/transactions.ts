@@ -20,7 +20,7 @@ export class Transactions extends BaseResource {
   ): Promise<TransactionGetAllResponseDto> {
     await validateOrThrow(TransactionGetAllSchema, params);
 
-    return this.get<TransactionGetAllResponseDto>("", {
+    return this.get<TransactionGetAllResponseDto>("/all", {
       params,
     });
   }
