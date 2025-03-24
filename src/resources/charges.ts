@@ -37,7 +37,7 @@ export class Charges extends BaseResource {
    * Get a charge
    */
   async getOne(id: string): Promise<ChargeGetResponseDto> {
-    return this.get<ChargeGetResponseDto>(`?uid=${id}`);
+    return this.get<ChargeGetResponseDto>(`/${id}`);
   }
 
   /**
