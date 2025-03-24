@@ -101,26 +101,6 @@ var Authorization = class extends BaseResource {
   }
 };
 
-// src/utils/safe-await.ts
-var safeAwait = async (promise) => {
-  try {
-    const result = await promise;
-    return { result, error: null };
-  } catch (error) {
-    return { result: null, error };
-  }
-};
-
-// src/utils/validate-or-throw.ts
-var validateOrThrow = async (schema, data) => {
-  const validation = await safeAwait(schema.parseAsync(data));
-  if (validation.error) {
-    console.error(validation.error.issues);
-    throw new Error(`Error while validating your input data : ${JSON.stringify(validation.error.issues)}`);
-  }
-  return validation.result;
-};
-
 // src/dto/charges/ChargeCreateDto.ts
 var import_zod = require("zod");
 
@@ -196,6 +176,26 @@ var ChargeCreateResponseSchema = import_zod.z.object({
   success: import_zod.z.boolean()
 });
 
+// src/utils/safe-await.ts
+var safeAwait = async (promise) => {
+  try {
+    const result = await promise;
+    return { result, error: null };
+  } catch (error) {
+    return { result: null, error };
+  }
+};
+
+// src/utils/validate-or-throw.ts
+var validateOrThrow = async (schema, data) => {
+  const validation = await safeAwait(schema.parseAsync(data));
+  if (validation.error) {
+    console.error(validation.error.issues);
+    throw new Error(`Error while validating your input data : ${JSON.stringify(validation.error.issues)}`);
+  }
+  return validation.result;
+};
+
 // src/resources/charges.ts
 var Charges = class extends BaseResource {
   constructor(client) {
@@ -206,7 +206,10 @@ var Charges = class extends BaseResource {
    */
   async create(data, sourceKey) {
     await validateOrThrow(ChargeCreateSchema, data);
-    return this.post(`/create${sourceKey ? `?sourceKey=${sourceKey}` : ""}`, data);
+    return this.post(
+      `/create${sourceKey ? `?sourceKey=${sourceKey}` : ""}`,
+      data
+    );
   }
   /**
    * Get a charge
@@ -215,10 +218,18 @@ var Charges = class extends BaseResource {
     return this.get(`?uid=${id}`);
   }
   /**
+   * Get all charges
+   */
+  async getAll(params) {
+    return this.get(`/all`, { params });
+  }
+  /**
    * Download the charge's PDF as array buffer
    */
   async downloadPdfAsBuffer(id) {
-    return this.get(`/download?uid=${id}`, { responseType: "arraybuffer" });
+    return this.get(`/download?uid=${id}`, {
+      responseType: "arraybuffer"
+    });
   }
   /**
    * Cancel a charge
@@ -282,10 +293,10 @@ var Transactions = class extends BaseResource {
   /**
    * Get all transactions
    */
-  async getAll(data) {
-    await validateOrThrow(TransactionGetAllSchema, data);
+  async getAll(params) {
+    await validateOrThrow(TransactionGetAllSchema, params);
     return this.get("", {
-      params: data
+      params
     });
   }
 };

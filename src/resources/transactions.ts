@@ -16,12 +16,12 @@ export class Transactions extends BaseResource {
    * Get all transactions
    */
   async getAll(
-    data: TransactionGetAllDto
+    params: TransactionGetAllDto
   ): Promise<TransactionGetAllResponseDto> {
-    await validateOrThrow(TransactionGetAllSchema, data);
+    await validateOrThrow(TransactionGetAllSchema, params);
 
     return this.get<TransactionGetAllResponseDto>("", {
-      params: data,
+      params,
     });
   }
 }

@@ -64,6 +64,10 @@ declare class Authorization extends BaseResource {
     try(): Promise<AuthorizationTrialReturn>;
 }
 
+interface ChargeCancelResponseDto {
+    success: boolean;
+}
+
 interface ApiError {
     status: number;
     message: string;
@@ -263,6 +267,126 @@ declare const ChargeCreateResponseSchema: z.ZodObject<{
 type ChargeCreateDto = z.infer<typeof ChargeCreateSchema>;
 type ChargeCreateResponseDto = z.infer<typeof ChargeCreateResponseSchema>;
 
+declare const ChargeGetAllSchema: z.ZodObject<{
+    account: z.ZodString;
+    status: z.ZodOptional<z.ZodEnum<["ALL", ...ChargeStatus[]]>>;
+    query: z.ZodOptional<z.ZodString>;
+    from: z.ZodOptional<z.ZodDate>;
+    to: z.ZodOptional<z.ZodDate>;
+    page: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    account: string;
+    page: number;
+    status?: "ALL" | ChargeStatus | undefined;
+    query?: string | undefined;
+    from?: Date | undefined;
+    to?: Date | undefined;
+}, {
+    account: string;
+    page: number;
+    status?: "ALL" | ChargeStatus | undefined;
+    query?: string | undefined;
+    from?: Date | undefined;
+    to?: Date | undefined;
+}>;
+declare const ChargeGetAllResponseSchema: z.ZodObject<{
+    charges: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        externalId: z.ZodString;
+        customer: z.ZodObject<{
+            name: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+        }, {
+            name: string;
+        }>;
+        transactionId: z.ZodString;
+        paymentMethods: z.ZodArray<z.ZodString, "many">;
+        amount: z.ZodNumber;
+        taxFine: z.ZodNumber;
+        taxInterest: z.ZodNumber;
+        status: z.ZodNativeEnum<typeof ChargeStatus>;
+        dueAt: z.ZodDate;
+        expiredAt: z.ZodDate;
+        createdAt: z.ZodDate;
+    }, "strip", z.ZodTypeAny, {
+        status: ChargeStatus;
+        externalId: string;
+        customer: {
+            name: string;
+        };
+        dueAt: Date;
+        expiredAt: Date;
+        id: string;
+        transactionId: string;
+        paymentMethods: string[];
+        amount: number;
+        taxFine: number;
+        taxInterest: number;
+        createdAt: Date;
+    }, {
+        status: ChargeStatus;
+        externalId: string;
+        customer: {
+            name: string;
+        };
+        dueAt: Date;
+        expiredAt: Date;
+        id: string;
+        transactionId: string;
+        paymentMethods: string[];
+        amount: number;
+        taxFine: number;
+        taxInterest: number;
+        createdAt: Date;
+    }>, "many">;
+    total: z.ZodNumber;
+    page: z.ZodNumber;
+    totalPages: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    page: number;
+    charges: {
+        status: ChargeStatus;
+        externalId: string;
+        customer: {
+            name: string;
+        };
+        dueAt: Date;
+        expiredAt: Date;
+        id: string;
+        transactionId: string;
+        paymentMethods: string[];
+        amount: number;
+        taxFine: number;
+        taxInterest: number;
+        createdAt: Date;
+    }[];
+    total: number;
+    totalPages: number;
+}, {
+    page: number;
+    charges: {
+        status: ChargeStatus;
+        externalId: string;
+        customer: {
+            name: string;
+        };
+        dueAt: Date;
+        expiredAt: Date;
+        id: string;
+        transactionId: string;
+        paymentMethods: string[];
+        amount: number;
+        taxFine: number;
+        taxInterest: number;
+        createdAt: Date;
+    }[];
+    total: number;
+    totalPages: number;
+}>;
+type ChargeGetAllDto = z.infer<typeof ChargeGetAllSchema>;
+type ChargeGetAllResponseDto = z.infer<typeof ChargeGetAllResponseSchema>;
+
 declare const ChargeGetResponseSchema: z.ZodObject<{
     status: z.ZodNativeEnum<typeof ChargeStatus>;
     boleto: z.ZodOptional<z.ZodObject<{
@@ -285,10 +409,6 @@ declare const ChargeGetResponseSchema: z.ZodObject<{
 }>;
 type ChargeGetResponseDto = z.infer<typeof ChargeGetResponseSchema>;
 
-interface ChargeCancelResponseDto {
-    success: boolean;
-}
-
 declare class Charges extends BaseResource {
     constructor(client: AxiosInstance);
     /**
@@ -299,6 +419,10 @@ declare class Charges extends BaseResource {
      * Get a charge
      */
     getOne(id: string): Promise<ChargeGetResponseDto>;
+    /**
+     * Get all charges
+     */
+    getAll(params: ChargeGetAllDto): Promise<ChargeGetAllResponseDto>;
     /**
      * Download the charge's PDF as array buffer
      */
@@ -407,6 +531,8 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
     totalPages: z.ZodNumber;
     currentPage: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    total: number;
+    totalPages: number;
     transactions: {
         type: TransactionType;
         status: PaymentStatus;
@@ -428,10 +554,10 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         bankAccountId: string;
         fees: number;
     }[];
-    total: number;
-    totalPages: number;
     currentPage: number;
 }, {
+    total: number;
+    totalPages: number;
     transactions: {
         type: TransactionType;
         status: PaymentStatus;
@@ -453,8 +579,6 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         bankAccountId: string;
         fees: number;
     }[];
-    total: number;
-    totalPages: number;
     currentPage: number;
 }>;
 type TransactionGetAllDto = z.infer<typeof TransactionGetAllSchema>;
@@ -465,7 +589,7 @@ declare class Transactions extends BaseResource {
     /**
      * Get all transactions
      */
-    getAll(data: TransactionGetAllDto): Promise<TransactionGetAllResponseDto>;
+    getAll(params: TransactionGetAllDto): Promise<TransactionGetAllResponseDto>;
 }
 
 interface ContabullOptions {
