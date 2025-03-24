@@ -4,14 +4,14 @@ import { z } from 'zod';
 declare const AccountGetAllResponseSchema: z.ZodObject<{
     label: z.ZodString;
     balance: z.ZodObject<{
-        availableBalance: z.ZodNumber;
-        pendingBalance: z.ZodNumber;
+        availableBalanceCents: z.ZodNumber;
+        pendingBalanceCents: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        availableBalance: number;
-        pendingBalance: number;
+        availableBalanceCents: number;
+        pendingBalanceCents: number;
     }, {
-        availableBalance: number;
-        pendingBalance: number;
+        availableBalanceCents: number;
+        pendingBalanceCents: number;
     }>;
     number: z.ZodString;
     bankProvider: z.ZodString;
@@ -19,16 +19,16 @@ declare const AccountGetAllResponseSchema: z.ZodObject<{
     number: string;
     label: string;
     balance: {
-        availableBalance: number;
-        pendingBalance: number;
+        availableBalanceCents: number;
+        pendingBalanceCents: number;
     };
     bankProvider: string;
 }, {
     number: string;
     label: string;
     balance: {
-        availableBalance: number;
-        pendingBalance: number;
+        availableBalanceCents: number;
+        pendingBalanceCents: number;
     };
     bankProvider: string;
 }>;
@@ -458,7 +458,7 @@ declare const TransactionGetAllSchema: z.ZodObject<{
 declare const TransactionGetAllResponseSchema: z.ZodObject<{
     transactions: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
-        amount: z.ZodNumber;
+        amountCents: z.ZodNumber;
         customer: z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
@@ -490,6 +490,7 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
+        amountCents: number;
         currency: Currency;
         customer: {
             name: string;
@@ -498,7 +499,6 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
             cpfCnpj: string;
         };
         id: string;
-        amount: number;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -510,6 +510,7 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
+        amountCents: number;
         currency: Currency;
         customer: {
             name: string;
@@ -518,7 +519,6 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
             cpfCnpj: string;
         };
         id: string;
-        amount: number;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -537,6 +537,7 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
+        amountCents: number;
         currency: Currency;
         customer: {
             name: string;
@@ -545,7 +546,6 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
             cpfCnpj: string;
         };
         id: string;
-        amount: number;
         payerName: string;
         payerCpfCnpj: string;
         description: string;
@@ -562,6 +562,7 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
         type: TransactionType;
         status: PaymentStatus;
         disputed: boolean;
+        amountCents: number;
         currency: Currency;
         customer: {
             name: string;
@@ -570,7 +571,6 @@ declare const TransactionGetAllResponseSchema: z.ZodObject<{
             cpfCnpj: string;
         };
         id: string;
-        amount: number;
         payerName: string;
         payerCpfCnpj: string;
         description: string;

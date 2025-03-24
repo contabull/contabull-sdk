@@ -26,7 +26,7 @@ export const TransactionCustomerSchema = z.object({
 
 export const TransactionSchema = z.object({
   id: z.string(),
-  amount: z.number(),
+  amountCents: z.number(),
   customer: TransactionCustomerSchema,
   payerName: z.string(),
   payerCpfCnpj: z.string(),

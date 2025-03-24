@@ -3,8 +3,8 @@ import { z } from "zod";
 export const AccountGetAllResponseSchema = z.object({
   label: z.string(),
   balance: z.object({
-    availableBalance: z.number(),
-    pendingBalance: z.number(),
+    availableBalanceCents: z.number(),
+    pendingBalanceCents: z.number(),
   }),
   number: z.string(),
   bankProvider: z.string(),

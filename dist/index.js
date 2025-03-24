@@ -264,7 +264,7 @@ var TransactionCustomerSchema = import_zod2.z.object({
 });
 var TransactionSchema = import_zod2.z.object({
   id: import_zod2.z.string(),
-  amount: import_zod2.z.number(),
+  amountCents: import_zod2.z.number(),
   customer: TransactionCustomerSchema,
   payerName: import_zod2.z.string(),
   payerCpfCnpj: import_zod2.z.string(),

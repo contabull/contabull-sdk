@@ -220,7 +220,7 @@ var TransactionCustomerSchema = z2.object({
 });
 var TransactionSchema = z2.object({
   id: z2.string(),
-  amount: z2.number(),
+  amountCents: z2.number(),
   customer: TransactionCustomerSchema,
   payerName: z2.string(),
   payerCpfCnpj: z2.string(),
