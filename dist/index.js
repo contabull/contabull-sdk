@@ -352,6 +352,12 @@ var Customers = class extends BaseResource {
       params
     });
   }
+  /**
+   * Get one customer by id
+   */
+  async getOne(id) {
+    return this.get(`/${id}`);
+  }
 };
 
 // src/sdk.ts

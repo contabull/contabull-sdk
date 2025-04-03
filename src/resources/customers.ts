@@ -6,6 +6,7 @@ import {
 } from "../dto/customers/CustomerGetAll";
 import { validateOrThrow } from "../utils/validate-or-throw";
 import { BaseResource } from "./base-resource";
+import { CustomerGetOneResponseDto } from "../dto/customers/CustomerGetOne";
 
 export class Customers extends BaseResource {
   constructor(client: AxiosInstance) {
@@ -21,5 +22,12 @@ export class Customers extends BaseResource {
     return this.get<CustomerGetAllResponseDto>("", {
       params,
     });
+  }
+
+  /**
+   * Get one customer by id
+   */
+  async getOne(id: string): Promise<CustomerGetOneResponseDto> {
+    return this.get<CustomerGetOneResponseDto>(`/${id}`);
   }
 }

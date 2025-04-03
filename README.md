@@ -167,6 +167,21 @@ You can list your customers using this method. This method returns paginated cus
 await contabull.transactions.getAll({ ...your filters... });
 ```
 
+### Get one customer
+
+You can access to a specific customer using this method. This method returns customer datas.
+
+#### Request parameters
+
+- `id` : a **string** corresponding to the customer identifier
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.customers.getOne(id);
+```
+
+
 ## Transactions
 
 Access and manage your transactions using our API.
