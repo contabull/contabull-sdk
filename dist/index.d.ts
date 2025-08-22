@@ -718,12 +718,100 @@ declare const CustomerGetAllResponseSchema: z.ZodObject<{
 type CustomerGetAllDto = z.infer<typeof CustomerGetAllSchema>;
 type CustomerGetAllResponseDto = z.infer<typeof CustomerGetAllResponseSchema>;
 
+declare const CustomerGetOneResponseSchema: z.ZodObject<{
+    customer: z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        email: z.ZodString;
+        document: z.ZodString;
+        type: z.ZodNativeEnum<typeof CustomerType>;
+        isBeneficiary: z.ZodBoolean;
+        addressStreet: z.ZodString;
+        addressNumber: z.ZodString;
+        addressNeighborhood: z.ZodString;
+        addressCity: z.ZodString;
+        addressState: z.ZodString;
+        addressPostalCode: z.ZodString;
+        addressCountryCode: z.ZodString;
+        createdAt: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        type: CustomerType;
+        name: string;
+        document: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }, {
+        id: string;
+        type: CustomerType;
+        name: string;
+        document: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    customer: {
+        id: string;
+        type: CustomerType;
+        name: string;
+        document: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    };
+}, {
+    customer: {
+        id: string;
+        type: CustomerType;
+        name: string;
+        document: string;
+        createdAt: string;
+        email: string;
+        isBeneficiary: boolean;
+        addressStreet: string;
+        addressNumber: string;
+        addressNeighborhood: string;
+        addressCity: string;
+        addressState: string;
+        addressPostalCode: string;
+        addressCountryCode: string;
+    };
+}>;
+type CustomerGetOneResponseDto = z.infer<typeof CustomerGetOneResponseSchema>;
+
 declare class Customers extends BaseResource {
     constructor(client: AxiosInstance);
     /**
      * Get all customers
      */
     getAll(params: CustomerGetAllDto): Promise<CustomerGetAllResponseDto>;
+    /**
+     * Get one customer by id
+     */
+    getOne(id: string): Promise<CustomerGetOneResponseDto>;
 }
 
 interface ContabullOptions {
