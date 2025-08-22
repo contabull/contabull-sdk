@@ -57,3 +57,9 @@ export enum TransactionType {
   outbound = "outbound",
   refund = "refund",
 }
+
+export enum AvailableLanguages {
+  en = "en",
+  pt = "pt",
+  zh = "zh",
+}

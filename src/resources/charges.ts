@@ -6,6 +6,10 @@ import {
   ChargeCreateSchema,
 } from "../dto/charges/ChargeCreateDto";
 import {
+  ChargeDownloadDto,
+  ChargeDownloadSchema,
+} from "../dto/charges/ChargeDownload";
+import {
   ChargeGetAllDto,
   ChargeGetAllResponseDto,
 } from "../dto/charges/ChargeGetAllDto";
@@ -50,9 +54,15 @@ export class Charges extends BaseResource {
   /**
    * Download the charge's PDF as array buffer
    */
-  async downloadPdfAsBuffer(id: string): Promise<Buffer> {
+  async downloadPdfAsBuffer(data: ChargeDownloadDto): Promise<Buffer> {
+    await validateOrThrow(ChargeDownloadSchema, data);
+
+    const { id, language } = data;
+    const params = language ? { language } : {};
+
     return this.get<any>(`/${id}/download`, {
       responseType: "arraybuffer",
+      params,
     });
   }
 
