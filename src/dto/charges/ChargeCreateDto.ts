@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Currency } from "../../types";
+import { ChargeStatus, Currency } from "../../types";
 
 export const ChargeCreateCustomerAddressSchema = z.object({
   street: z.string(),
@@ -16,15 +16,16 @@ export const ChargeCreateCustomerSchema = z.object({
   name: z.string(),
   document: z.string(),
   type: z.enum(["individual", "company"]),
-  address: ChargeCreateCustomerAddressSchema.optional(),
+  address: ChargeCreateCustomerAddressSchema.optional()
 });
 
 export const ChargeCreateSchema = z.object({
-  account: z.string(),
+  accountId: z.string(),
   amountCents: z.number().positive(),
   currency: z.nativeEnum(Currency),
-  methods: z.array(z.enum(["boleto", "pix"])),
   externalId: z.string().optional(),
+  sourceKey: z.string().optional(),
+  methods: z.array(z.enum(["boleto", "pix"])),
   customer: ChargeCreateCustomerSchema,
   taxes: z
     .object({
@@ -38,7 +39,19 @@ export const ChargeCreateSchema = z.object({
 
 export const ChargeCreateResponseSchema = z.object({
   id: z.string(),
-  success: z.boolean(),
+  boleto: z
+    .object({
+      success: z.boolean(),
+      status: z.nativeEnum(ChargeStatus),
+    })
+    .optional(),
+  pix: z
+    .object({
+      success: z.boolean(),
+      emv: z.string(),
+      status: z.nativeEnum(ChargeStatus),
+    })
+    .optional(),
 });
 
 export type ChargeCreateDto = z.infer<typeof ChargeCreateSchema>;

@@ -181,10 +181,75 @@ await contabull.charges.getOne("crg_...");
 
 ### Create charge
 
+Create a new charge with support for boleto and/or PIX payment methods.
+
+#### Request parameters
+
+- `accountId` : **string** corresponding to the bank account ID
+- `amountCents` : **number** amount in cents (positive value)
+- `currency` : **Currency** enum value (e.g., BRL)
+- `methods` : **array** of payment methods (`["boleto", "pix"]` or just one)
+- `customer` : **object** with customer information
+  - `name` : **string** customer's full name
+  - `document` : **string** customer's CPF or CNPJ
+  - `type` : **"individual" | "company"**
+  - `address` _(optional)_ : **object** with address details
+- `externalId` _(optional)_ : **string** your internal reference ID
+- `sourceKey` _(optional)_ : **string** source key for the charge
+- `taxes` _(optional)_ : **object** with tax configuration
+  - `fine` _(optional)_ : **number** fine percentage
+  - `interest` _(optional)_ : **number** interest percentage
+- `dueAt` _(optional)_ : **string** due date (ISO format)
+- `expiredAt` _(optional)_ : **string** expiration date (ISO format)
+
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.charges.create({ ... });
+await contabull.charges.create({
+  accountId: "acc_123",
+  amountCents: 10000, // R$ 100.00
+  currency: Currency.BRL,
+  methods: ["boleto", "pix"],
+  customer: {
+    name: "João Silva",
+    document: "12345678901",
+    type: "individual",
+    address: {
+      street: "Rua das Flores",
+      number: "123",
+      postalCode: "01234-567",
+      complement: "Apto 45",
+      neighborhood: "Centro",
+      city: "São Paulo",
+      countryCode: "BR",
+      state: "SP"
+    }
+  },
+  externalId: "order_123",
+  taxes: {
+    fine: 2.0, // 2% fine
+    interest: 1.0 // 1% monthly interest
+  },
+  dueAt: "2024-12-31T23:59:59Z",
+  expiredAt: "2025-01-31T23:59:59Z"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "id": "crg_123abc456def",
+  "boleto": {
+    "success": true,
+    "status": "pending"
+  },
+  "pix": {
+    "success": true,
+    "emv": "00020126580014br.gov.bcb.pix...",
+    "status": "pending"
+  }
+}
 ```
 
 ### Cancel charge
