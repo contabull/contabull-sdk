@@ -77,6 +77,69 @@ await contabull.accounts.getAll();
 
 While using the SDK, most of the time you'll have to pass an `account` in query parameters or in the body. The `account` corresponds to the bank account `id`, like shown in the above response example.
 
+## Bank Institutions
+
+Access and manage bank institutions information using the SDK.
+
+### Get all bank institutions
+
+You can list bank institutions using this method. This method returns paginated bank institutions by batch of 50 rows by default.
+
+#### Request parameters
+
+- `page` : a **number** corresponding to the current page you're fetching
+- `query` _(optional)_ : **string** for search term, you can search by bank name, ISPB, or COMPE code
+- `totalPerPage` _(optional)_ : **number** (default: 50) number of results per page
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.bankInstitutions.getAll({
+  page: 1,
+  query: "Banco do Brasil", // optional
+  totalPerPage: 50 // optional
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "bankInstitutions": [
+    {
+      "id": "bank_id_123",
+      "name": "Banco do Brasil S.A.",
+      "ispb": "00000000",
+      "compe": "001",
+      "indexationNumber": 1
+    }
+  ],
+  "total": 150,
+  "totalPages": 3,
+  "currentPage": 1,
+  "hasMore": true
+}
+```
+
+### Search bank institutions
+
+Search for specific bank institutions using this method.
+
+#### Request parameters
+
+- `page` : a **number** corresponding to the current page you're fetching
+- `query` _(optional)_ : **string** for search term
+- `totalPerPage` _(optional)_ : **number** (default: 50) number of results per page
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.bankInstitutions.search({
+  page: 1,
+  query: "Celcoin"
+});
+```
+
 ## Charges
 
 Access and manage your charges using the SDK.
@@ -136,14 +199,26 @@ await contabull.charges.cancel("crg_...");
 
 You can download the charge's PDF using our API.
 
+#### Request parameters
+
+- `id` : **string** corresponding to the charge ID
+- `language` _(optional)_ : **AvailableLanguages** enum value (default: `pt`)
+
 ```typescript
 // const contabull = new Contabull({ ... });
 
-const id = "crg_...";
+// Download with default language (Portuguese)
+const buffer = await contabull.charges.downloadPdfAsBuffer({
+  id: "crg_..."
+});
 
-const buffer = await contabull.charges.downloadPdfAsBuffer(id);
+// Download with specific language
+const buffer = await contabull.charges.downloadPdfAsBuffer({
+  id: "crg_...",
+  language: AvailableLanguages.en
+});
 
-fs.writeFileSync(`${id}.pdf`, buffer as any); // save it locally
+fs.writeFileSync(`charge.pdf`, buffer as any); // save it locally
 ```
 
 ## Customers
