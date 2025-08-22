@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import SHA256 from "crypto-js/sha256";
 import jwt from "jsonwebtoken";
-import { Accounts, Authorization, Charges, Transactions } from "./resources";
+import { Accounts, Authorization, Charges, Crypto, Transactions } from "./resources";
 import { Customers } from "./resources/customers";
 import type { ApiError } from "./types";
 
@@ -20,6 +20,7 @@ export class Contabull {
 
   public accounts: Accounts;
   public charges: Charges;
+  public crypto: Crypto;
   public customers: Customers;
   public transactions: Transactions;
 
@@ -38,6 +39,7 @@ export class Contabull {
 
     this.accounts = new Accounts(this.client);
     this.charges = new Charges(this.client);
+    this.crypto = new Crypto(this.client);
     this.customers = new Customers(this.client);
     this.transactions = new Transactions(this.client);
     this.client.interceptors.request.use(

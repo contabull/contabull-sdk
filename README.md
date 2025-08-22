@@ -279,6 +279,238 @@ await contabull.customers.getOne(id);
 }
 ```
 
+## Crypto
+
+Access and manage crypto trading operations using the SDK.
+
+### Wallet Management
+
+#### Create a crypto wallet
+
+Create a new crypto wallet for storing digital assets.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.createWallet({
+  name: "My Wallet",
+  symbol: CryptoSymbol.USDT,
+  network: CryptoNetwork.bitcoin,
+  address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "id": "wallet_123abc456def",
+  "name": "My Wallet",
+  "symbol": "USDT",
+  "network": "bitcoin",
+  "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+}
+```
+
+#### List all crypto wallets
+
+Get a list of all your crypto wallets.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.listWallets();
+```
+
+#### Response payload :
+
+```json
+[
+  {
+    "walletId": "wallet_123abc456def",
+    "active": true,
+    "name": "My BTC Wallet",
+    "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    "symbol": "BTC",
+    "network": "bitcoin",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+### Trading Operations
+
+#### Get available crypto products
+
+Get a list of available crypto products for trading.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getProducts();
+```
+
+#### Get a trading quote
+
+Get a price quote for crypto trading.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getQuote({
+  symbol: CryptoSymbol.BTC,
+  settlement: CryptoOtcSettlementSchedule.T0
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "quoteId": "quote_123abc456def",
+  "symbol": "BTC",
+  "settlement": "T0",
+  "price": 45000.50,
+  "expireAtUnix": 1640995200
+}
+```
+
+#### Execute a crypto trade
+
+Execute a trade order using a quote.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.executeOrder({
+  quoteId: "quote_123abc456def",
+  cost: 1000, // Either cost or quantity, not both
+  accountId: "acc_123",
+  walletId: "wallet_123abc456def"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "cryptoTransactionId": "ctx_123abc456def",
+  "quantity": 0.02222222,
+  "cost": 1000,
+  "price": 45000.50,
+  "network": "bitcoin",
+  "symbol": "BTC",
+  "currency": "USD",
+  "walletId": "wallet_123abc456def",
+  "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "walletName": "My BTC Wallet",
+  "settlementSchedule": "T0",
+  "settlementDate": "2024-01-15T10:30:00Z"
+}
+```
+
+#### Pay for a crypto transaction
+
+Process payment for a crypto transaction.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.pay({
+  accountId: "acc_123",
+  amount: 1000
+});
+```
+
+### Transaction Management
+
+#### Get crypto transactions
+
+List crypto transactions with optional filtering.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getTransactions({
+  symbol: CryptoSymbol.BTC, // optional
+  status: CryptoOtcTransactionStatus.COMPLETED, // optional
+  from: new Date("2024-01-01"), // optional
+  to: new Date("2024-12-31"), // optional
+  page: 1
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transactions": [
+    {
+      "transactionId": "ctx_123abc456def",
+      "status": "COMPLETED",
+      "quantity": 0.02222222,
+      "cost": 1000,
+      "price": 45000.50,
+      "network": "bitcoin",
+      "symbol": "BTC",
+      "currency": "USD",
+      "walletId": "wallet_123abc456def",
+      "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+      "walletName": "My BTC Wallet",
+      "settlementDate": "2024-01-15T10:30:00Z",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "total": 25,
+  "totalPages": 3,
+  "currentPage": 1,
+  "hasMore": true
+}
+```
+
+#### Get a specific crypto transaction
+
+Get detailed information about a specific crypto transaction.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getTransaction("ctx_123abc456def");
+```
+
+#### Response payload :
+
+```json
+{
+  "transactionId": "ctx_123abc456def",
+  "status": "COMPLETED",
+  "quantity": 0.02222222,
+  "cost": 1000,
+  "price": 45000.50,
+  "network": "bitcoin",
+  "symbol": "BTC",
+  "currency": "USD",
+  "walletId": "wallet_123abc456def",
+  "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "walletName": "My BTC Wallet",
+  "settlementSchedule": "T0",
+  "settlementDate": "2024-01-15T10:30:00Z",
+  "debt": {
+    "initial": 1000,
+    "remaining": 0
+  },
+  "fills": [
+    {
+      "id": "fill_123abc456def",
+      "amount": 1000,
+      "hash": "abc123def456...",
+      "filledAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
 
 ## Transactions
 

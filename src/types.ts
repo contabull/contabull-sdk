@@ -68,3 +68,33 @@ export enum CustomerType {
   COMPANY = "COMPANY",
   INDIVIDUAL = "INDIVIDUAL",
 }
+
+export enum CryptoNetwork {
+  ethereum = "ethereum",
+  tron = "tron",
+  polygon = "polygon",
+  binance = "binance",
+  solana = "solana",
+}
+
+export enum CryptoOtcSettlementSchedule {
+  instant = "instant",
+  d0d0 = "d0d0",
+  d1d1 = "d1d1",
+  d2d2 = "d2d2",
+}
+
+export enum CryptoSymbol {
+  usdt = "usdt",
+  usdc = "usdc",
+  trx = "trx",
+  eth = "eth",
+}
+
+export enum CryptoOtcTransactionStatus {
+  fulfilled = "fulfilled",
+  fulfilling = "fulfilling",
+  pending_payment = "pending_payment",
+  pending_fulfillment = "pending_fulfillment",
+  fulfillment_scheduled = "fulfillment_scheduled",
+}
