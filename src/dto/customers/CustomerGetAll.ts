@@ -1,9 +1,5 @@
 import { z } from "zod";
-
-export enum CustomerType {
-  COMPANY = "COMPANY",
-  INDIVIDUAL = "INDIVIDUAL",
-}
+import { CustomerType } from "../../types";
 
 export const CustomerGetAllSchema = z.object({
   type: z.nativeEnum(CustomerType).optional(),

@@ -63,3 +63,8 @@ export enum AvailableLanguages {
   pt = "pt",
   zh = "zh",
 }
+
+export enum CustomerType {
+  COMPANY = "COMPANY",
+  INDIVIDUAL = "INDIVIDUAL",
+}
