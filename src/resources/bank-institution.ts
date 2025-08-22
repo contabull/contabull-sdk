@@ -1,6 +1,10 @@
 import { AxiosInstance } from "axios";
 import { BaseResource } from "./base-resource";
-import { BankInstitutionSearchDto } from "../dto/bank-institutions/BankInstitutionSearchDto";
+import { 
+  BankInstitutionSearchDto,
+  BankInstitutionSearchResponseDto,
+  BankInstitutionSearchSchema
+} from "../dto/bank-institutions/BankInstitutionSearchDto";
 import {
   BankInstitutionGetAllDto,
   BankInstitutionGetAllResponseDto,
@@ -27,7 +31,9 @@ export class BankInstitution extends BaseResource {
   /**
    * Search a bank institution
    */
-  async search(params: BankInstitutionSearchDto): Promise<BankInstitutionSearchDto> {
-    return this.get<BankInstitutionSearchDto>("", { params });
+  async search(params: BankInstitutionSearchDto): Promise<BankInstitutionSearchResponseDto> {
+    await validateOrThrow(BankInstitutionSearchSchema, params);
+
+    return this.get<BankInstitutionSearchResponseDto>("", { params });
   }
 }
