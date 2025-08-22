@@ -256,6 +256,29 @@ You can access to a specific customer using this method. This method returns cus
 await contabull.customers.getOne(id);
 ```
 
+#### Response payload :
+
+```json
+{
+  "customer": {
+    "id": "cus_123abc456def",
+    "name": "João Silva",
+    "email": "joao.silva@example.com",
+    "document": "12345678901",
+    "type": "INDIVIDUAL",
+    "isBeneficiary": false,
+    "addressStreet": "Rua das Flores",
+    "addressNumber": "123",
+    "addressNeighborhood": "Centro",
+    "addressCity": "São Paulo",
+    "addressState": "SP",
+    "addressPostalCode": "01234-567",
+    "addressCountryCode": "BR",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
 
 ## Transactions
 
