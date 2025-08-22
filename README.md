@@ -290,16 +290,64 @@ You can list your transactions using this method. This method returns paginated 
 
 #### Request parameters
 
-- `page` : a **number** corresponding to the current page you're fetching
-- `account` : **string** corresponding to the bank account ID
-- `status` : refer to its type,
-- `type` : refer to its type,
+- `page` _(optional)_ : a **number** corresponding to the current page you're fetching (default: 1)
+- `accountId` _(optional)_ : **string** corresponding to the bank account ID
+- `customerId` _(optional)_ : **string** corresponding to the customer's ID
+- `type` _(optional)_ : refer to its type (default: "all")
+- `status` _(optional)_ : refer to its type (default: "all")
+- `query` _(optional)_ : **string** for search term, you can search by transaction ID, customer name, etc.
 - `from` _(optional)_ : from the **date** you want to fetch transactions
 - `to` _(optional)_ : to the **date** you want to fetch transactions
-- `customer` _(optional)_ : a **string** corresponding to the customer's ID
 
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.transactions.getAll({ ...your filters... });
+await contabull.transactions.getAll({
+  page: 1,
+  accountId: "acc_123",
+  customerId: "cus_456", // optional
+  type: "inbound", // optional, default: "all"
+  status: "succeeded", // optional, default: "all"
+  query: "payment description", // optional
+  from: new Date("2024-01-01"), // optional
+  to: new Date("2024-12-31") // optional
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transactions": [
+    {
+      "id": "txn_123abc456def",
+      "amountCents": 10000,
+      "account": "acc_123",
+      "customer": {
+        "id": "cus_456",
+        "name": "João Silva",
+        "email": "joao@example.com",
+        "cpfCnpj": "12345678901"
+      },
+      "payerName": "Maria Santos",
+      "payerCpfCnpj": "98765432100",
+      "description": "Payment for services",
+      "e2eID": "E12345678202401011234567890",
+      "status": "succeeded",
+      "method": "pix",
+      "type": "inbound",
+      "currency": "BRL",
+      "fees": 299,
+      "disputed": false,
+      "pixKey": "joao@example.com",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:31:00Z",
+      "completedAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "total": 50,
+  "totalPages": 5,
+  "currentPage": 1,
+  "hasMore": true
+}
 ```
