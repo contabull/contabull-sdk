@@ -50,7 +50,7 @@ export class Crypto extends BaseResource {
   async getQuote(data: QuoteDto): Promise<QuoteOutputDto> {
     await validateOrThrow(QuoteDto, data);
 
-    return this.post<QuoteOutputDto>("/quote", data);
+    return this.get<QuoteOutputDto>("/quote", { params: data });
   }
 
   /**

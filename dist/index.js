@@ -476,7 +476,7 @@ var Crypto = class extends BaseResource {
    */
   async getQuote(data) {
     await validateOrThrow(QuoteDto, data);
-    return this.post("/quote", data);
+    return this.get("/quote", { params: data });
   }
   /**
    * Execute a crypto trade
