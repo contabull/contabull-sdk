@@ -98,3 +98,19 @@ export enum CryptoOtcTransactionStatus {
   pending_fulfillment = "pending_fulfillment",
   fulfillment_scheduled = "fulfillment_scheduled",
 }
+
+export enum TransferMethod {
+  PIX_KEY = "pix-key",
+  PIX_EMV = "pix-emv",
+  PIX_ACCOUNT = "pix-account",
+  TED = "ted",
+  SAME_BANK = "same-bank",
+  SAME_COMPANY = "same-company",
+}
+
+export enum BeneficiaryAccountType {
+  CHECKING = "checking",
+  SAVINGS = "savings",
+  PAYMENT = "payment",
+  SALARY = "salary",
+}
