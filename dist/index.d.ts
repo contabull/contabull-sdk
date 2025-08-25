@@ -1030,7 +1030,7 @@ declare class Crypto extends BaseResource {
     /**
      * Pay for a crypto transaction
      */
-    pay(data: PayDto): Promise<PayOutputDto>;
+    pay(transactionId: string, data: PayDto): Promise<PayOutputDto>;
     /**
      * Get list of crypto transactions
      */

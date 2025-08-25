@@ -432,9 +432,9 @@ var Crypto = class extends BaseResource {
   /**
    * Pay for a crypto transaction
    */
-  async pay(data) {
+  async pay(transactionId, data) {
     await validateOrThrow(PayDto, data);
-    return this.post("/pay", data);
+    return this.post(`/transactions/${transactionId}/pay`, data);
   }
   /**
    * Get list of crypto transactions

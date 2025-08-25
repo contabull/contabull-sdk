@@ -65,10 +65,10 @@ export class Crypto extends BaseResource {
   /**
    * Pay for a crypto transaction
    */
-  async pay(data: PayDto): Promise<PayOutputDto> {
+  async pay(transactionId: string, data: PayDto): Promise<PayOutputDto> {
     await validateOrThrow(PayDto, data);
 
-    return this.post<PayOutputDto>("/pay", data);
+    return this.post<PayOutputDto>(`/transactions/${transactionId}/pay`, data);
   }
 
   /**
