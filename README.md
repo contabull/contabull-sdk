@@ -77,6 +77,69 @@ await contabull.accounts.getAll();
 
 While using the SDK, most of the time you'll have to pass an `account` in query parameters or in the body. The `account` corresponds to the bank account `id`, like shown in the above response example.
 
+## Bank Institutions
+
+Access and manage bank institutions information using the SDK.
+
+### Get all bank institutions
+
+You can list bank institutions using this method. This method returns paginated bank institutions by batch of 50 rows by default.
+
+#### Request parameters
+
+- `page` : a **number** corresponding to the current page you're fetching
+- `query` _(optional)_ : **string** for search term, you can search by bank name, ISPB, or COMPE code
+- `totalPerPage` _(optional)_ : **number** (default: 50) number of results per page
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.bankInstitutions.getAll({
+  page: 1,
+  query: "Banco do Brasil", // optional
+  totalPerPage: 50 // optional
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "bankInstitutions": [
+    {
+      "id": "bank_id_123",
+      "name": "Banco do Brasil S.A.",
+      "ispb": "00000000",
+      "compe": "001",
+      "indexationNumber": 1
+    }
+  ],
+  "total": 150,
+  "totalPages": 3,
+  "currentPage": 1,
+  "hasMore": true
+}
+```
+
+### Search bank institutions
+
+Search for specific bank institutions using this method.
+
+#### Request parameters
+
+- `page` : a **number** corresponding to the current page you're fetching
+- `query` _(optional)_ : **string** for search term
+- `totalPerPage` _(optional)_ : **number** (default: 50) number of results per page
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.bankInstitutions.search({
+  page: 1,
+  query: "Celcoin"
+});
+```
+
 ## Charges
 
 Access and manage your charges using the SDK.
@@ -118,10 +181,75 @@ await contabull.charges.getOne("crg_...");
 
 ### Create charge
 
+Create a new charge with support for boleto and/or PIX payment methods.
+
+#### Request parameters
+
+- `accountId` : **string** corresponding to the bank account ID
+- `amountCents` : **number** amount in cents (positive value)
+- `currency` : **Currency** enum value (e.g., BRL)
+- `methods` : **array** of payment methods (`["boleto", "pix"]` or just one)
+- `customer` : **object** with customer information
+  - `name` : **string** customer's full name
+  - `document` : **string** customer's CPF or CNPJ
+  - `type` : **"individual" | "company"**
+  - `address` _(optional)_ : **object** with address details
+- `externalId` _(optional)_ : **string** your internal reference ID
+- `sourceKey` _(optional)_ : **string** source key for the charge
+- `taxes` _(optional)_ : **object** with tax configuration
+  - `fine` _(optional)_ : **number** fine percentage
+  - `interest` _(optional)_ : **number** interest percentage
+- `dueAt` _(optional)_ : **string** due date (ISO format)
+- `expiredAt` _(optional)_ : **string** expiration date (ISO format)
+
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.charges.create({ ... });
+await contabull.charges.create({
+  accountId: "acc_123",
+  amountCents: 10000, // R$ 100.00
+  currency: Currency.BRL,
+  methods: ["boleto", "pix"],
+  customer: {
+    name: "João Silva",
+    document: "12345678901",
+    type: "individual",
+    address: {
+      street: "Rua das Flores",
+      number: "123",
+      postalCode: "01234-567",
+      complement: "Apto 45",
+      neighborhood: "Centro",
+      city: "São Paulo",
+      countryCode: "BR",
+      state: "SP"
+    }
+  },
+  externalId: "order_123",
+  taxes: {
+    fine: 2.0, // 2% fine
+    interest: 1.0 // 1% monthly interest
+  },
+  dueAt: "2024-12-31T23:59:59Z",
+  expiredAt: "2025-01-31T23:59:59Z"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "id": "crg_123abc456def",
+  "boleto": {
+    "success": true,
+    "status": "pending"
+  },
+  "pix": {
+    "success": true,
+    "emv": "00020126580014br.gov.bcb.pix...",
+    "status": "pending"
+  }
+}
 ```
 
 ### Cancel charge
@@ -136,14 +264,26 @@ await contabull.charges.cancel("crg_...");
 
 You can download the charge's PDF using our API.
 
+#### Request parameters
+
+- `id` : **string** corresponding to the charge ID
+- `language` _(optional)_ : **AvailableLanguages** enum value (default: `pt`)
+
 ```typescript
 // const contabull = new Contabull({ ... });
 
-const id = "crg_...";
+// Download with default language (Portuguese)
+const buffer = await contabull.charges.downloadPdfAsBuffer({
+  id: "crg_..."
+});
 
-const buffer = await contabull.charges.downloadPdfAsBuffer(id);
+// Download with specific language
+const buffer = await contabull.charges.downloadPdfAsBuffer({
+  id: "crg_...",
+  language: AvailableLanguages.en
+});
 
-fs.writeFileSync(`${id}.pdf`, buffer as any); // save it locally
+fs.writeFileSync(`charge.pdf`, buffer as any); // save it locally
 ```
 
 ## Customers
@@ -164,8 +304,432 @@ You can list your customers using this method. This method returns paginated cus
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.transactions.getAll({ ...your filters... });
+await contabull.customers.getAll({ ...your filters... });
 ```
+
+### Get one customer
+
+You can access to a specific customer using this method. This method returns customer datas.
+
+#### Request parameters
+
+- `id` : a **string** corresponding to the customer identifier
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.customers.getOne(id);
+```
+
+#### Response payload :
+
+```json
+{
+  "customer": {
+    "id": "cus_123abc456def",
+    "name": "João Silva",
+    "email": "joao.silva@example.com",
+    "document": "12345678901",
+    "type": "INDIVIDUAL",
+    "isBeneficiary": false,
+    "addressStreet": "Rua das Flores",
+    "addressNumber": "123",
+    "addressNeighborhood": "Centro",
+    "addressCity": "São Paulo",
+    "addressState": "SP",
+    "addressPostalCode": "01234-567",
+    "addressCountryCode": "BR",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+## Crypto
+
+Access and manage crypto trading operations using the SDK.
+
+### Wallet Management
+
+#### Create a crypto wallet
+
+Create a new crypto wallet for storing digital assets.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.createWallet({
+  name: "My Wallet",
+  symbol: CryptoSymbol.usdt,
+  network: CryptoNetwork.ethereum,
+  address: "0x1234567890123456789012345678901234567890"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "id": "wallet_123abc456def",
+  "name": "My Wallet",
+  "symbol": "usdt",
+  "network": "ethereum",
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
+
+#### List all crypto wallets
+
+Get a list of all your crypto wallets.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.listWallets();
+```
+
+#### Response payload :
+
+```json
+[
+  {
+    "walletId": "wallet_123abc456def",
+    "active": true,
+    "name": "My BTC Wallet",
+    "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    "symbol": "BTC",
+    "network": "bitcoin",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+### Trading Operations
+
+#### Get available crypto products
+
+Get a list of available crypto products for trading.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getProducts();
+```
+
+#### Get a trading quote
+
+Get a price quote for crypto trading.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getQuote({
+  symbol: CryptoSymbol.eth,
+  settlement: CryptoOtcSettlementSchedule.instant
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "quoteId": "quote_123abc456def",
+  "symbol": "eth",
+  "settlement": "instant",
+  "price": 3500.50,
+  "expireAtUnix": 1640995200
+}
+```
+
+#### Execute a crypto trade
+
+Execute a trade order using a quote.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.executeOrder({
+  quoteId: "quote_123abc456def",
+  cost: 1000, // Either cost or quantity, not both
+  accountId: "acc_123",
+  walletId: "wallet_123abc456def"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "cryptoTransactionId": "ctx_123abc456def",
+  "quantity": 0.02222222,
+  "cost": 1000,
+  "price": 45000.50,
+  "network": "bitcoin",
+  "symbol": "BTC",
+  "currency": "USD",
+  "walletId": "wallet_123abc456def",
+  "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "walletName": "My BTC Wallet",
+  "settlementSchedule": "T0",
+  "settlementDate": "2024-01-15T10:30:00Z"
+}
+```
+
+#### Pay for a crypto transaction
+
+Process payment for a crypto transaction.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.pay("ctx_123abc456def", {
+  accountId: "acc_123",
+  amount: 1000
+});
+```
+
+### Transaction Management
+
+#### Get crypto transactions
+
+List crypto transactions with optional filtering.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getTransactions({
+  symbol: CryptoSymbol.eth, // optional
+  status: CryptoOtcTransactionStatus.fulfilled, // optional
+  from: new Date("2024-01-01"), // optional
+  to: new Date("2024-12-31"), // optional
+  page: 1
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transactions": [
+    {
+      "transactionId": "ctx_123abc456def",
+      "status": "fulfilled",
+      "quantity": 0.2857142857,
+      "cost": 1000,
+      "price": 3500.50,
+      "network": "ethereum",
+      "symbol": "eth",
+      "currency": "USD",
+      "walletId": "wallet_123abc456def",
+      "walletAddress": "0x1234567890123456789012345678901234567890",
+      "walletName": "My ETH Wallet",
+      "settlementDate": "2024-01-15T10:30:00Z",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "total": 25,
+  "totalPages": 3,
+  "currentPage": 1,
+  "hasMore": true
+}
+```
+
+#### Get a specific crypto transaction
+
+Get detailed information about a specific crypto transaction.
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.crypto.getTransaction("ctx_123abc456def");
+```
+
+#### Response payload :
+
+```json
+{
+  "transactionId": "ctx_123abc456def",
+  "status": "fulfilled",
+  "quantity": 0.2857142857,
+  "cost": 1000,
+  "price": 3500.50,
+  "network": "ethereum",
+  "symbol": "eth",
+  "currency": "USD",
+  "walletId": "wallet_123abc456def",
+  "walletAddress": "0x1234567890123456789012345678901234567890",
+  "walletName": "My ETH Wallet",
+  "settlementSchedule": "instant",
+  "settlementDate": "2024-01-15T10:30:00Z",
+  "debt": {
+    "initial": 1000,
+    "remaining": 0
+  },
+  "fills": [
+    {
+      "id": "fill_123abc456def",
+      "amount": 1000,
+      "hash": "0xabc123def456...",
+      "filledAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+## Transfers
+
+Access and manage money transfers using the SDK. The transfer system supports multiple transfer methods including PIX, TED, and same-bank transfers.
+
+### Prepare a transfer
+
+Before executing a transfer, you need to prepare it first. This will validate the transfer and provide necessary information like beneficiary details and bank information.
+
+#### Transfer Methods
+
+The SDK supports the following transfer methods:
+
+- `pix-key` : Transfer using a PIX key (email, phone, CPF/CNPJ, or random key)
+- `pix-emv` : Transfer using a PIX EMV code (QR code)
+- `pix-account` : Transfer using PIX with bank account details
+- `ted` : Transfer using TED (traditional bank transfer)
+- `same-bank` : Transfer within the same bank
+- `same-company` : Transfer between accounts of the same company
+
+#### PIX Key Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_KEY,
+  pixKey: "joao@example.com"
+});
+```
+
+#### PIX EMV Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_EMV,
+  emv: "00020126580014br.gov.bcb.pix..."
+});
+```
+
+#### PIX Account Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_ACCOUNT,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using complete beneficiary details
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryAgency: "1234",
+  beneficiaryBankId: "bank_123",
+  beneficiaryAccountType: BeneficiaryAccountType.CHECKING
+});
+```
+
+#### TED Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.TED,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using complete beneficiary details
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryAgency: "1234",
+  beneficiaryBankId: "bank_123",
+  beneficiaryAccountType: BeneficiaryAccountType.CHECKING
+});
+```
+
+#### Same Bank Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.SAME_BANK,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using beneficiary details (without agency)
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryBankId: "bank_123"
+});
+```
+
+#### Same Company Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.SAME_COMPANY,
+  destinationAccountId: "acc_456"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transferId": "trf_123abc456def",
+  "beneficiaryDocument": "12345678901",
+  "bankName": "Banco do Brasil S.A."
+}
+```
+
+### Confirm a transfer
+
+After preparing a transfer, you need to confirm it with the transfer amount to execute it.
+
+#### Request parameters
+
+- `transferId` : **string** the transfer ID returned from the prepare step
+- `amountCent` : **number** amount in cents (positive value)
+- `accountId` : **string** corresponding to the bank account ID
+- `reference` _(optional)_ : **string** your internal reference for the transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.confirm({
+  transferId: "trf_123abc456def",
+  amountCent: 10000, // R$ 100.00
+  accountId: "acc_123",
+  reference: "Payment for invoice #1234" // optional
+});
+```
+
+#### Account Types
+
+For transfers requiring account type specification, use the `BeneficiaryAccountType` enum:
+
+- `CHECKING` : Checking account (conta corrente)
+- `SAVINGS` : Savings account (conta poupança)
+- `PAYMENT` : Payment account (conta de pagamento)
+- `SALARY` : Salary account (conta salário)
 
 ## Transactions
 
@@ -177,16 +741,64 @@ You can list your transactions using this method. This method returns paginated 
 
 #### Request parameters
 
-- `page` : a **number** corresponding to the current page you're fetching
-- `account` : **string** corresponding to the bank account ID
-- `status` : refer to its type,
-- `type` : refer to its type,
+- `page` _(optional)_ : a **number** corresponding to the current page you're fetching (default: 1)
+- `accountId` _(optional)_ : **string** corresponding to the bank account ID
+- `customerId` _(optional)_ : **string** corresponding to the customer's ID
+- `type` _(optional)_ : refer to its type (default: "all")
+- `status` _(optional)_ : refer to its type (default: "all")
+- `query` _(optional)_ : **string** for search term, you can search by transaction ID, customer name, etc.
 - `from` _(optional)_ : from the **date** you want to fetch transactions
 - `to` _(optional)_ : to the **date** you want to fetch transactions
-- `customer` _(optional)_ : a **string** corresponding to the customer's ID
 
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.transactions.getAll({ ...your filters... });
+await contabull.transactions.getAll({
+  page: 1,
+  accountId: "acc_123",
+  customerId: "cus_456", // optional
+  type: "inbound", // optional, default: "all"
+  status: "succeeded", // optional, default: "all"
+  query: "payment description", // optional
+  from: new Date("2024-01-01"), // optional
+  to: new Date("2024-12-31") // optional
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transactions": [
+    {
+      "id": "txn_123abc456def",
+      "amountCents": 10000,
+      "account": "acc_123",
+      "customer": {
+        "id": "cus_456",
+        "name": "João Silva",
+        "email": "joao@example.com",
+        "cpfCnpj": "12345678901"
+      },
+      "payerName": "Maria Santos",
+      "payerCpfCnpj": "98765432100",
+      "description": "Payment for services",
+      "e2eID": "E12345678202401011234567890",
+      "status": "succeeded",
+      "method": "pix",
+      "type": "inbound",
+      "currency": "BRL",
+      "fees": 299,
+      "disputed": false,
+      "pixKey": "joao@example.com",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:31:00Z",
+      "completedAt": "2024-01-15T10:31:00Z"
+    }
+  ],
+  "total": 50,
+  "totalPages": 5,
+  "currentPage": 1,
+  "hasMore": true
+}
 ```

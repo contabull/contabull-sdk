@@ -57,3 +57,60 @@ export enum TransactionType {
   outbound = "outbound",
   refund = "refund",
 }
+
+export enum AvailableLanguages {
+  en = "en",
+  pt = "pt",
+  zh = "zh",
+}
+
+export enum CustomerType {
+  COMPANY = "COMPANY",
+  INDIVIDUAL = "INDIVIDUAL",
+}
+
+export enum CryptoNetwork {
+  ethereum = "ethereum",
+  tron = "tron",
+  polygon = "polygon",
+  binance = "binance",
+  solana = "solana",
+}
+
+export enum CryptoOtcSettlementSchedule {
+  instant = "instant",
+  d0d0 = "d0d0",
+  d1d1 = "d1d1",
+  d2d2 = "d2d2",
+}
+
+export enum CryptoSymbol {
+  usdt = "usdt",
+  usdc = "usdc",
+  trx = "trx",
+  eth = "eth",
+}
+
+export enum CryptoOtcTransactionStatus {
+  fulfilled = "fulfilled",
+  fulfilling = "fulfilling",
+  pending_payment = "pending_payment",
+  pending_fulfillment = "pending_fulfillment",
+  fulfillment_scheduled = "fulfillment_scheduled",
+}
+
+export enum TransferMethod {
+  PIX_KEY = "pix-key",
+  PIX_EMV = "pix-emv",
+  PIX_ACCOUNT = "pix-account",
+  TED = "ted",
+  SAME_BANK = "same-bank",
+  SAME_COMPANY = "same-company",
+}
+
+export enum BeneficiaryAccountType {
+  CHECKING = "checking",
+  SAVINGS = "savings",
+  PAYMENT = "payment",
+  SALARY = "salary",
+}

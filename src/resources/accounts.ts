@@ -1,5 +1,5 @@
 import type { AxiosInstance } from "axios";
-import { AccountGetAllResponseDto } from "../dto/accounts/AccountGetAllDto";
+import { AccountGetAllOutputDto } from "../dto/accounts/AccountGetAllDto";
 import { BaseResource } from "./base-resource";
 
 export class Accounts extends BaseResource {
@@ -10,7 +10,7 @@ export class Accounts extends BaseResource {
   /**
    * Get all accounts
    */
-  async getAll(): Promise<AccountGetAllResponseDto> {
-    return this.get<AccountGetAllResponseDto>("");
+  async getAll(): Promise<AccountGetAllOutputDto> {
+    return this.get<AccountGetAllOutputDto>("");
   }
 }
