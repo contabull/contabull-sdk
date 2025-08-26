@@ -304,7 +304,7 @@ You can list your customers using this method. This method returns paginated cus
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.transactions.getAll({ ...your filters... });
+await contabull.customers.getAll({ ...your filters... });
 ```
 
 ### Get one customer
@@ -359,9 +359,9 @@ Create a new crypto wallet for storing digital assets.
 
 await contabull.crypto.createWallet({
   name: "My Wallet",
-  symbol: CryptoSymbol.USDT,
-  network: CryptoNetwork.bitcoin,
-  address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+  symbol: CryptoSymbol.usdt,
+  network: CryptoNetwork.ethereum,
+  address: "0x1234567890123456789012345678901234567890"
 });
 ```
 
@@ -371,9 +371,9 @@ await contabull.crypto.createWallet({
 {
   "id": "wallet_123abc456def",
   "name": "My Wallet",
-  "symbol": "USDT",
-  "network": "bitcoin",
-  "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+  "symbol": "usdt",
+  "network": "ethereum",
+  "address": "0x1234567890123456789012345678901234567890"
 }
 ```
 
@@ -423,8 +423,8 @@ Get a price quote for crypto trading.
 // const contabull = new Contabull({ ... });
 
 await contabull.crypto.getQuote({
-  symbol: CryptoSymbol.BTC,
-  settlement: CryptoOtcSettlementSchedule.T0
+  symbol: CryptoSymbol.eth,
+  settlement: CryptoOtcSettlementSchedule.instant
 });
 ```
 
@@ -433,9 +433,9 @@ await contabull.crypto.getQuote({
 ```json
 {
   "quoteId": "quote_123abc456def",
-  "symbol": "BTC",
-  "settlement": "T0",
-  "price": 45000.50,
+  "symbol": "eth",
+  "settlement": "instant",
+  "price": 3500.50,
   "expireAtUnix": 1640995200
 }
 ```
@@ -481,7 +481,7 @@ Process payment for a crypto transaction.
 ```typescript
 // const contabull = new Contabull({ ... });
 
-await contabull.crypto.pay({
+await contabull.crypto.pay("ctx_123abc456def", {
   accountId: "acc_123",
   amount: 1000
 });
@@ -497,8 +497,8 @@ List crypto transactions with optional filtering.
 // const contabull = new Contabull({ ... });
 
 await contabull.crypto.getTransactions({
-  symbol: CryptoSymbol.BTC, // optional
-  status: CryptoOtcTransactionStatus.COMPLETED, // optional
+  symbol: CryptoSymbol.eth, // optional
+  status: CryptoOtcTransactionStatus.fulfilled, // optional
   from: new Date("2024-01-01"), // optional
   to: new Date("2024-12-31"), // optional
   page: 1
@@ -512,16 +512,16 @@ await contabull.crypto.getTransactions({
   "transactions": [
     {
       "transactionId": "ctx_123abc456def",
-      "status": "COMPLETED",
-      "quantity": 0.02222222,
+      "status": "fulfilled",
+      "quantity": 0.2857142857,
       "cost": 1000,
-      "price": 45000.50,
-      "network": "bitcoin",
-      "symbol": "BTC",
+      "price": 3500.50,
+      "network": "ethereum",
+      "symbol": "eth",
       "currency": "USD",
       "walletId": "wallet_123abc456def",
-      "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-      "walletName": "My BTC Wallet",
+      "walletAddress": "0x1234567890123456789012345678901234567890",
+      "walletName": "My ETH Wallet",
       "settlementDate": "2024-01-15T10:30:00Z",
       "createdAt": "2024-01-15T10:30:00Z",
       "updatedAt": "2024-01-15T10:31:00Z"
@@ -549,17 +549,17 @@ await contabull.crypto.getTransaction("ctx_123abc456def");
 ```json
 {
   "transactionId": "ctx_123abc456def",
-  "status": "COMPLETED",
-  "quantity": 0.02222222,
+  "status": "fulfilled",
+  "quantity": 0.2857142857,
   "cost": 1000,
-  "price": 45000.50,
-  "network": "bitcoin",
-  "symbol": "BTC",
+  "price": 3500.50,
+  "network": "ethereum",
+  "symbol": "eth",
   "currency": "USD",
   "walletId": "wallet_123abc456def",
-  "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-  "walletName": "My BTC Wallet",
-  "settlementSchedule": "T0",
+  "walletAddress": "0x1234567890123456789012345678901234567890",
+  "walletName": "My ETH Wallet",
+  "settlementSchedule": "instant",
   "settlementDate": "2024-01-15T10:30:00Z",
   "debt": {
     "initial": 1000,
@@ -569,13 +569,167 @@ await contabull.crypto.getTransaction("ctx_123abc456def");
     {
       "id": "fill_123abc456def",
       "amount": 1000,
-      "hash": "abc123def456...",
+      "hash": "0xabc123def456...",
       "filledAt": "2024-01-15T10:31:00Z"
     }
   ],
   "createdAt": "2024-01-15T10:30:00Z"
 }
 ```
+
+## Transfers
+
+Access and manage money transfers using the SDK. The transfer system supports multiple transfer methods including PIX, TED, and same-bank transfers.
+
+### Prepare a transfer
+
+Before executing a transfer, you need to prepare it first. This will validate the transfer and provide necessary information like beneficiary details and bank information.
+
+#### Transfer Methods
+
+The SDK supports the following transfer methods:
+
+- `pix-key` : Transfer using a PIX key (email, phone, CPF/CNPJ, or random key)
+- `pix-emv` : Transfer using a PIX EMV code (QR code)
+- `pix-account` : Transfer using PIX with bank account details
+- `ted` : Transfer using TED (traditional bank transfer)
+- `same-bank` : Transfer within the same bank
+- `same-company` : Transfer between accounts of the same company
+
+#### PIX Key Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_KEY,
+  pixKey: "joao@example.com"
+});
+```
+
+#### PIX EMV Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_EMV,
+  emv: "00020126580014br.gov.bcb.pix..."
+});
+```
+
+#### PIX Account Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.PIX_ACCOUNT,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using complete beneficiary details
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryAgency: "1234",
+  beneficiaryBankId: "bank_123",
+  beneficiaryAccountType: BeneficiaryAccountType.CHECKING
+});
+```
+
+#### TED Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.TED,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using complete beneficiary details
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryAgency: "1234",
+  beneficiaryBankId: "bank_123",
+  beneficiaryAccountType: BeneficiaryAccountType.CHECKING
+});
+```
+
+#### Same Bank Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.SAME_BANK,
+  // Option 1: Using beneficiary ID
+  beneficiaryId: "ben_123",
+  // Option 2: Using beneficiary details (without agency)
+  beneficiaryName: "Maria Silva",
+  beneficiaryDocument: "12345678901",
+  beneficiaryAccountNumber: "123456",
+  beneficiaryBankId: "bank_123"
+});
+```
+
+#### Same Company Transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.prepare({
+  accountId: "acc_123",
+  method: TransferMethod.SAME_COMPANY,
+  destinationAccountId: "acc_456"
+});
+```
+
+#### Response payload :
+
+```json
+{
+  "transferId": "trf_123abc456def",
+  "beneficiaryDocument": "12345678901",
+  "bankName": "Banco do Brasil S.A."
+}
+```
+
+### Confirm a transfer
+
+After preparing a transfer, you need to confirm it with the transfer amount to execute it.
+
+#### Request parameters
+
+- `transferId` : **string** the transfer ID returned from the prepare step
+- `amountCent` : **number** amount in cents (positive value)
+- `accountId` : **string** corresponding to the bank account ID
+- `reference` _(optional)_ : **string** your internal reference for the transfer
+
+```typescript
+// const contabull = new Contabull({ ... });
+
+await contabull.transfers.confirm({
+  transferId: "trf_123abc456def",
+  amountCent: 10000, // R$ 100.00
+  accountId: "acc_123",
+  reference: "Payment for invoice #1234" // optional
+});
+```
+
+#### Account Types
+
+For transfers requiring account type specification, use the `BeneficiaryAccountType` enum:
+
+- `CHECKING` : Checking account (conta corrente)
+- `SAVINGS` : Savings account (conta poupança)
+- `PAYMENT` : Payment account (conta de pagamento)
+- `SALARY` : Salary account (conta salário)
 
 ## Transactions
 
