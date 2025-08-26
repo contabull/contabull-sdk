@@ -157,6 +157,3 @@ export type TransferPrepareDto =
   | TransferPrepareTedDto
   | TransferPrepareSameBankDto
   | TransferPrepareSameCompanyDto;
-
-// export { TransferMethod };
-
